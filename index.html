@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#d4af37">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Primera Mano Info">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <title>Primera Mano - Información</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+<!-- STICKY HEADER -->
+<div id="sticky-header-container">
+  <div class="top-bar">
+    <div class="brand-container">
+      <i class="fa-solid fa-gem icon-animado"></i>
+      <h1 class="titulo-animado">Primera Mano <span style="font-size:0.5em;color:#ccc;">Información</span></h1>
+    </div>
+    <div class="search-container">
+      <i class="fa-solid fa-search"></i>
+      <input type="text" id="buscar-producto" placeholder="Buscar productos..." oninput="filtrarProductos()" onkeyup="filtrarProductos()">
+    </div>
+  </div>
+  <nav id="main-nav">
+    <div class="nav-item dropdown">
+      <a href="#electrodomesticos-section">⚡ Electrodomésticos <span class="dropdown-icon">▼</span></a>
+    </div>
+    <div class="nav-item dropdown">
+      <a href="#muebles-section">🪑 Muebles <span class="dropdown-icon">▼</span></a>
+    </div>
+    <div class="nav-item dropdown">
+      <a href="#combos-section">🛒 Combos y Tienda <span class="dropdown-icon">▼</span></a>
+      <div class="dropdown-content">
+        <a href="#carnicos">🥩 Cárnicos</a>
+        <a href="#agromercado">🌽 Agro y Mercado</a>
+        <a href="#confituras">🍯 Confituras</a>
+        <a href="#bebidas">🥤 Bebidas</a>
+        <a href="#aseo">🧴 Aseo y Limpieza</a>
+        <a href="#farmacia">💊 Farmacia</a>
+        <a href="#otros">📦 Otros</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- PRODUCT SECTIONS - rendered dynamically by app.js -->
+<main id="contenido-principal">
+  <!-- Products loaded from products.json -->
+</main>
+
+<!-- PRODUCT DETAIL MODAL (supports up to 4 photos + info panel) -->
+<div id="product-detail-modal">
+  <div id="product-detail-content">
+    <button id="product-detail-close" onclick="cerrarDetalle()">✕</button>
+    
+    <div id="product-detail-left">
+      <!-- Main image -->
+      <div id="product-detail-img-container">
+        <img id="product-detail-img" src="" alt="Producto">
+      </div>
+      <!-- Thumbnail strip for up to 4 photos -->
+      <div id="product-thumbnails">
+        <!-- Thumbnails generated dynamically -->
+      </div>
+      <!-- Download current photo button -->
+      <button id="btn-download-photo" onclick="descargarFotoActual()">
+        <i class="fa-solid fa-download"></i> Descargar Foto
+      </button>
+    </div>
+    
+    <div id="product-detail-info">
+      <h2 id="product-detail-title"></h2>
+      <p id="product-detail-price" class="precio"></p>
+      <p id="product-detail-desc"></p>
+      
+      <!-- Info panel for product characteristics -->
+      <div id="product-info-panel">
+        <button id="btn-info-toggle" onclick="toggleInfoPanel()">
+          <i class="fa-solid fa-circle-info"></i> Información del Producto
+        </button>
+        <div id="info-content" style="display:none;">
+          <!-- Characteristics loaded dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING MENSAJERÍA WIDGET -->
+<div id="mensajeria-float" onclick="toggleMensajeria()">
+  <i class="fa-solid fa-envelope"></i>
+  <span>Mensajería</span>
+</div>
+
+<!-- MENSAJERÍA PANEL -->
+<div id="mensajeria-panel" style="display:none;">
+  <div id="mensajeria-header">
+    <h3><i class="fa-solid fa-location-dot"></i> Mensajería - Verificador de Direcciones</h3>
+    <button onclick="toggleMensajeria()">✕</button>
+  </div>
+  <div id="mensajeria-body">
+    <p class="mensajeria-desc">Ingrese una dirección en La Habana y nuestro sistema identificará automáticamente el municipio y zona.</p>
+    <div class="mensajeria-input-group">
+      <input type="text" id="direccion-input" placeholder="Ej: Calle 23 esquina L, Vedado..." oninput="analizarDireccion()">
+      <button onclick="analizarDireccion()"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+    <div id="resultado-direccion"></div>
+    <div id="sugerencias-direccion"></div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2024 Primera Mano Información — Solo con fines informativos</p>
+  <p>Las imágenes son propiedad de sus respectivos dueños</p>
+</footer>
+
+<script src="direcciones-habana.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
