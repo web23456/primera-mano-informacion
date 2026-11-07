@@ -509,7 +509,7 @@ function mostrarResultadoDireccion(resultado) {
     resultado.confianza >= 50 ? '⚠️ Media' : '❌ Baja';
 
   var html = '<div class="resultado-card">';
-  html += '<h4><i class="fa-solid fa-map-location-dot"></i> Dirección Identificada</h4>';
+  html += '<h4><i class="fa-solid fa-map-location-dot"></i> Hipótesis Principal: ' + resultado.municipio + '</h4>';
   html += '<p><strong>Municipio:</strong> <span class="municipio-tag">' + resultado.municipio + '</span></p>';
 
   if (resultado.barrio) {
@@ -517,7 +517,9 @@ function mostrarResultadoDireccion(resultado) {
   }
 
   html += '<p><strong>Confianza:</strong> <span class="confianza ' + confianzaClass + '">' +
-    confianzaLabel + ' (' + resultado.confianza + '%)</span></p>';
+    confianzaLabel + ' (' + resultado.confianza + '%)</span>' +
+    (resultado.probabilidad ? ' <span style="margin-left:8px;font-size:0.85rem;color:#d4af37;background:rgba(212,175,55,0.15);padding:2px 8px;border-radius:12px;">Probabilidad: ' + resultado.probabilidad + '%</span>' : '') +
+    '</p>';
 
   if (resultado.lat && resultado.lng) {
     html += '<p style="margin-top:8px;"><strong>Coordenadas GPS:</strong> ' +
@@ -525,10 +527,10 @@ function mostrarResultadoDireccion(resultado) {
       resultado.lat.toFixed(4) + ', ' + resultado.lng.toFixed(4) + '</code></p>';
     
     // Enlace directo al mapa satelital / callejero OpenStreetMap y Google Maps
-    var osmUrl = 'https://www.openstreetmap.org/?mlat=' + resultado.lat + '&mlon=' + resultado.lng + '#map=15/' + resultado.lat + '/' + resultado.lng;
+    var osmUrl = 'https://www.openstreetmap.org/?mlat=' + resultado.lat + '&mlon=' + resultado.lng + '#map=16/' + resultado.lat + '/' + resultado.lng;
     var gmapsUrl = 'https://www.google.com/maps?q=' + resultado.lat + ',' + resultado.lng;
     
-    html += '<div style="margin-top:10px;display:flex;gap:8px;">' +
+    html += '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">' +
       '<a href="' + osmUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:5px;background:#2a2a2a;color:#d4af37;padding:6px 12px;border-radius:6px;font-size:0.8rem;text-decoration:none;border:1px solid #d4af37;">' +
       '<i class="fa-solid fa-map"></i> Ver en OpenStreetMap</a>' +
       '<a href="' + gmapsUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:5px;background:#d4af37;color:#111;font-weight:600;padding:6px 12px;border-radius:6px;font-size:0.8rem;text-decoration:none;">' +
@@ -538,10 +540,30 @@ function mostrarResultadoDireccion(resultado) {
 
   if (resultado.detalles && resultado.detalles.length > 0) {
     html += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);">';
-    html += '<p style="color:#888;font-size:0.85rem;margin-bottom:5px;">Detalles del análisis:</p>';
+    html += '<p style="color:#888;font-size:0.85rem;margin-bottom:5px;">Evidencias de triangulación:</p>';
     resultado.detalles.forEach(function(det) {
       html += '<p style="color:#aaa;font-size:0.85rem;margin:2px 0;">• ' + det + '</p>';
     });
+    html += '</div>';
+  }
+
+  // --- RENDERIZADO DE MÚLTIPLES RESPUESTAS / HIPÓTESIS ALTERNATIVAS ---
+  if (resultado.respuestas && resultado.respuestas.length > 1) {
+    html += '<div style="margin-top:14px;padding-top:12px;border-top:1px dashed rgba(212,175,55,0.3);">';
+    html += '<p style="color:#d4af37;font-size:0.88rem;font-weight:600;margin-bottom:8px;"><i class="fa-solid fa-diagram-project"></i> Otras posibilidades trianguladas:</p>';
+    
+    for (var rIdx = 1; rIdx < resultado.respuestas.length; rIdx++) {
+      var alt = resultado.respuestas[rIdx];
+      var altOsm = alt.lat && alt.lng ? 'https://www.openstreetmap.org/?mlat=' + alt.lat + '&mlon=' + alt.lng + '#map=15/' + alt.lat + '/' + alt.lng : '#';
+      html += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:8px 10px;margin-bottom:6px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+        '<span style="font-weight:600;color:#eee;font-size:0.85rem;">#' + (rIdx + 1) + ' ' + alt.municipio + (alt.barrio ? ' (' + alt.barrio + ')' : '') + '</span>' +
+        '<span style="font-size:0.8rem;color:#d4af37;font-weight:600;">' + alt.probabilidad + '% prob.</span>' +
+        '</div>' +
+        (alt.detalles && alt.detalles.length > 0 ? '<p style="color:#888;font-size:0.75rem;margin:4px 0 0 0;">' + alt.detalles[0] + '</p>' : '') +
+        (alt.lat && alt.lng ? '<div style="margin-top:4px;"><a href="' + altOsm + '" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:#d4af37;text-decoration:none;"><i class="fa-solid fa-location-crosshairs"></i> Coordenadas: ' + alt.lat.toFixed(4) + ', ' + alt.lng.toFixed(4) + '</a></div>' : '') +
+        '</div>';
+    }
     html += '</div>';
   }
 

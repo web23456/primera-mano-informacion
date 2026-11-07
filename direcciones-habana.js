@@ -1,8 +1,7 @@
 // ============================================
-// ALGORITMO ROBUSTO DE DIRECCIONES DE LA HABANA (MOTOR ULTRA-INTELIGENTE 2.0)
-// Base de datos exhaustiva: 15 Municipios, 105 Consejos Populares, +250 Barrios/Repartos,
-// Puntos de referencia, arterias viales, coordenadas GPS oficiales de alta precisión,
-// normalización de caracteres matemáticos Unicode, fonética cubana y tolerancia difusa a erratas.
+// ALGORITMO ROBUSTO DE DIRECCIONES DE LA HABANA (MOTOR DE TRIANGULACIÓN MULTI-HIPÓTESIS 3.0)
+// Capaz de triangular múltiples vías, calcular intersecciones y porcentajes de probabilidad,
+// rankear las mejores opciones y devolver respuestas primarias y alternativas.
 // ============================================
 
 (function(root) {
@@ -22,8 +21,7 @@
         'Miramar', 'Flores', 'Almendares', 'Sierra', 'Kohly', 'Buenavista', 'Buena Vista',
         'Querejeta', 'La Ceiba', 'Jaimanitas', 'Santa Fe', 'Baracoa', 'Siboney',
         'Atabey', 'Cubanacán', 'Náutico', 'Nautico', 'La Puntilla', 'Country Club', 'El Romerillo',
-        'Ampliación Almendares', 'Ampliacion Almendares', 'Alturas de Miramar', 'Alturas del Bosque',
-        'Ceiba', 'Parque Metropolitano'
+        'Ampliación Almendares', 'Alturas de Miramar', 'Alturas del Bosque', 'Ceiba'
       ],
       calles_principales: [
         '1ra', '3ra', '5ta', '5ta Avenida', '7ma', '9na', '11', '13', '19', '25',
@@ -126,8 +124,8 @@
         'Luyanó', 'Jesús del Monte', 'Lawton', 'Vista Alegre', 'Goyle', 'Sevillano', 'La Víbora', 'Santos Suárez', 'Tamarindo'
       ],
       barrios: [
-        'Santos Suárez', 'Santos Suarez', 'La Víbora', 'La Vibora', 'Víbora', 'Vibora',
-        'Lawton', 'Luyanó', 'Luyano', 'Sevillano', 'Loma del Chaple', 'Chaple',
+        'Luyanó', 'Luyano', 'Santos Suárez', 'Santos Suarez', 'La Víbora', 'La Vibora', 'Víbora', 'Vibora',
+        'Lawton', 'Sevillano', 'Loma del Chaple', 'Chaple',
         'Vista Alegre', 'Jesús del Monte', 'Jesus del Monte', 'Tamarindo', 'Acosta',
         'Santa Amalia', 'El Pilar', 'Goyle', 'Revolución'
       ],
@@ -137,12 +135,17 @@
         'General Lee', 'Patrocinio', 'San Mariano', 'San Francisco', 'Porvenir', 'Dolores',
         'Concepción', 'Concepcion', '16 de Octubre', 'Calzada de Luyanó', 'Calzada de Luyano',
         'Calzada de Jesús del Monte', 'Santa Ana', 'Ensenada', 'Fábrica', 'Fabrica', 'Severidad',
-        'Calle B Lawton', 'Tejar', 'San Nicolás', 'Carmen', 'Milagros', 'Santa Irene'
+        'Calle B Lawton', 'Tejar', 'San Nicolás', 'Carmen', 'Milagros', 'Santa Irene',
+        // Calles cruciales de Luyanó
+        'Rodríguez', 'Rodriguez', 'Calle Rodríguez', 'Calle Rodriguez',
+        'Concha', 'Calzada de Concha', 'Ramón Pintó', 'Ramon Pinto',
+        'Vía Blanca', 'Via Blanca', 'Agua Dulce', 'Manuel Pruna', 'Rosa Enríquez', 'Acierto', 'Justicia'
       ],
       puntos_referencia: [
         'Esquina de Toyo', 'Toyo', 'Panadería de Toyo', 'Panaderia de Toyo', 'Parque de Santos Suárez',
         'Parque Góngora', 'Parque Gongora', 'Parque de los Chivos', 'Hospital Hijas de Galicia',
-        'Hospital 10 de Octubre', 'La Dependiente', 'Santa Catalina y Juan Delgado', 'Lacret y Juan Delgado'
+        'Hospital 10 de Octubre', 'La Dependiente', 'Santa Catalina y Juan Delgado', 'Lacret y Juan Delgado',
+        'Rodriguez final', 'Concha y Vía Blanca', 'Servicentro Agua Dulce', 'Fábrica y Concha'
       ]
     },
     {
@@ -162,13 +165,13 @@
         'Calzada del Cerro', 'Buenos Aires', 'Patria', 'Primelles', 'Auditor', 'Tulipán', 'Tulipan',
         'Conill', 'Santa Teresa', 'Domínguez', 'Dominguez', 'Ayestarán', 'Ayestaran',
         'Boyeros', 'Calzada de Vento', 'San Salvador', 'Falgueras', 'Pizarro', 'San Felipe',
-        'Cristina', 'San Francisco Cerro', 'Aranguren', 'Pérez', 'Perez', 'Calvo'
+        'Cristina', 'San Francisco Cerro', 'Aranguren', 'Pérez', 'Perez', 'Calvo', 'Vía Blanca'
       ],
       puntos_referencia: [
         'Estadio Latinoamericano', 'El Latino', 'Mercado de Cuatro Caminos', 'Cuatro Caminos',
         'Fábrica de Cerveza Polar', 'Hospital Clínico Quirúrgico del Cerro', 'La Covadonga',
         'Hospital Salvador Allende', 'Parque Galicia', 'Ministerio de la Agricultura', 'MINAG',
-        'Puentes Grandes (Cerro)', 'Tulipán y Conill'
+        'Puentes Grandes (Cerro)', 'Tulipán y Conill', 'Ciudad Deportiva'
       ]
     },
     {
@@ -187,13 +190,12 @@
       calles_principales: [
         'Avenida 51', '51', 'Avenida 41', '41', 'Avenida 31', '31', 'Avenida 25', '25',
         'Calle 100', '100', 'Calle 114', '114', 'Calle 124', '124', 'Calle 126', '126',
-        'Calle 130', '130', 'Avenida 65', '65', 'Calle 102', '102', 'Calzada de Marianao',
-        'Avenida Los Quemados'
+        'Calle 130', '130', 'Avenida 65', '65', 'Calle 102', '102', 'Calzada de Marianao'
       ],
       puntos_referencia: [
         'Cabaret Tropicana', 'Tropicana', 'Ciudad Libertad', 'Hospital Militar Carlos J. Finlay',
-        'Hospital Militar Finlay', 'Hospital Pediátrico Juan Manuel Márquez', 'Juan Manuel Marquez',
-        'Obelisco de Marianao', 'Obelisco', '100 y 51', '124 y 51', 'Transisport', 'Puerta principal de Transisport'
+        'Hospital Militar Finlay', 'Hospital Pediátrico Juan Manuel Márquez',
+        'Obelisco de Marianao', 'Obelisco', '100 y 51', '124 y 51', 'Transisport'
       ]
     },
     {
@@ -208,16 +210,15 @@
       barrios: [
         'La Lisa', 'San Agustín', 'San Agustin', 'Punta Brava', 'Arroyo Arenas', 'El Cano',
         'Valle Grande', 'Balcón Arimao', 'Balcon Arimao', 'Corralillo', 'Guatao',
-        'Versalles', 'Coronela', 'La Coronela', 'Alturas de La Lisa', 'Bello 26', 'Morado', 'Laguito de La Lisa'
+        'Versalles', 'Coronela', 'La Coronela', 'Alturas de La Lisa', 'Bello 26', 'Morado'
       ],
       calles_principales: [
         'Avenida 51', 'Autopista Nacional', 'Carretera Central', 'Calle 160', 'Calle 222',
         'Calle 240', 'Calle 250', 'Avenida 23 de La Lisa', 'Avenida 250', 'Calle 252'
       ],
       puntos_referencia: [
-        'Hospital Ortopédico Frank País', 'Frank Pais', 'Puente de la Lisa', 'Puente de La Lisa',
-        'San Agustín Zona 1 a 6', 'Centro de Investigaciones Ozonoterapia', 'El Cano alfarería',
-        'Autopista del Mediodía', 'UCI (cercana)'
+        'Hospital Ortopédico Frank País', 'Puente de la Lisa', 'San Agustín Zona 1 a 6',
+        'Centro de Investigaciones Ozonoterapia', 'El Cano alfarería', 'Autopista del Mediodía'
       ]
     },
     {
@@ -232,19 +233,17 @@
         'Santiago de las Vegas', 'Rancho Boyeros', 'El Wajay', 'Wajay', 'Calabazar',
         'Fontanar', 'Altahabana', 'Capdevila', 'Mulgoba', 'Mazorra', 'Río Cristal', 'Rio Cristal',
         'Nuevo Santiago', 'Lutgardita', 'Villanueva', 'Trébol', 'Trebol', 'Aldabó', 'Aldabo',
-        'Abel Santamaría', 'Abel Santamaria', 'Armada', 'Casino Deportivo Boyeros'
+        'Abel Santamaría', 'Abel Santamaria'
       ],
       calles_principales: [
         'Avenida Independencia', 'Avenida Boyeros', 'Boyeros', 'Calzada de Bejucal', 'Calle 100',
         'Vento', 'Calzada de Vento', 'Avenida Van Troi', 'Van Troi', 'Carretera del Wajay',
-        'Avenida Rancho Boyeros', 'Camagüey', 'Camaguey'
+        'Camagüey', 'Camaguey'
       ],
       puntos_referencia: [
-        'Aeropuerto Internacional José Martí', 'Aeropuerto Jose Marti', 'Aeropuerto de La Habana',
-        'Terminal 1', 'Terminal 2', 'Terminal 3', 'Parque Lenin', 'Jardín Botánico Nacional',
-        'Jardin Botanico', 'ExpoCuba', 'Expocuba', 'Hospital Nacional Enrique Cabrera', 'Hospital Nacional',
-        'Hospital Psiquiátrico de La Habana', 'Mazorra', 'Centro Comercial Boyeros y Camagüey',
-        'Reloj Club', 'Boyeros y Camagüey', 'Boyeros y 100'
+        'Aeropuerto Internacional José Martí', 'Terminal 1', 'Terminal 2', 'Terminal 3',
+        'Parque Lenin', 'Jardín Botánico Nacional', 'ExpoCuba', 'Hospital Nacional Enrique Cabrera',
+        'Hospital Psiquiátrico de La Habana', 'Mazorra', 'Centro Comercial Boyeros y Camagüey', 'Reloj Club'
       ]
     },
     {
@@ -258,18 +257,15 @@
       barrios: [
         'Mantilla', 'Párraga', 'Parraga', 'Los Pinos', 'Poey', 'Víbora Park', 'Vibora Park',
         'Calvario', 'El Calvario', 'Managua', 'Eléctrico', 'Electrico', 'Güinera', 'Guinera',
-        'San Amado', 'Callejas', 'La Palma', 'Las Guásimas', 'Las Guasimas', 'El Lucero',
-        'Fraternidad', 'Santa Amalia', 'Reparto Moderno'
+        'San Amado', 'Callejas', 'La Palma', 'Las Guásimas', 'El Lucero', 'Fraternidad', 'Santa Amalia'
       ],
       calles_principales: [
         'Calzada de 10 de Octubre', 'Calzada de Managua', 'Calzada de Bejucal', 'Avenida de Mayo',
-        'Calle 8', 'Camagüey', 'Perla', 'Calle Perla', 'Georgia', 'Constitución', 'Constitucion',
-        'Coliseo', 'Carretera de Managua', 'Carretera de Santiago'
+        'Calle 8', 'Camagüey', 'Perla', 'Calle Perla', 'Georgia', 'Constitución', 'Coliseo'
       ],
       puntos_referencia: [
-        'Hospital Julio Trigo', 'Julio Trigo', 'Parque de Mantilla', 'Parque de Párraga',
-        'La Palma', 'Intersección de La Palma', 'Reparto Eléctrico final de guagua',
-        'Puente de Calabazar', 'Georgia 101'
+        'Hospital Julio Trigo', 'Parque de Mantilla', 'Parque de Párraga',
+        'La Palma', 'Intersección de La Palma', 'Reparto Eléctrico final de guagua', 'Puente de Calabazar'
       ]
     },
     {
@@ -281,26 +277,25 @@
         'Camilo Cienfuegos', 'Cojímar', 'Guiteras', 'Alturas de Alamar', 'Alamar Este', 'Guanabo', 'Campo Florido', 'Alamar-Playa'
       ],
       barrios: [
-        'Alamar', 'Cojímar', 'Cojimar', 'Guanabo', 'Boca Ciega', 'Santa María del Mar', 'Santa Maria del Mar',
-        'Tarará', 'Tarara', 'Brisas del Mar', 'Camilo Cienfuegos', 'Reparto Camilo Cienfuegos',
+        'Alamar', 'Cojímar', 'Cojimar', 'Guanabo', 'Boca Ciega', 'Santa María del Mar',
+        'Tarará', 'Brisas del Mar', 'Camilo Cienfuegos', 'Reparto Camilo Cienfuegos',
         'Villa Panamericana', 'Guiteras', 'Reparto Guiteras', 'Antonio Guiteras', 'Reparto Antonio Guiteras',
-        'Bahía', 'Reparto Bahía', 'Bahia', 'Reparto Bahia', 'Celimar', 'Bacuranao', 'Campo Florido',
-        'Alturas de Alamar', 'Alamar Playa', 'Alamar Este'
+        'Bahía', 'Reparto Bahía', 'Bahia', 'Reparto Bahia', 'Celimar', 'Bacuranao', 'Campo Florido'
       ],
       calles_principales: [
         'Vía Blanca', 'Via Blanca', 'Vía Monumental', 'Via Monumental', 'Avenida Casablanca',
         'Avenida Las Terrazas', '5ta Avenida de Guanabo', 'Avenida 7ma Alamar', 'Calle Real Guanabo'
       ],
       puntos_referencia: [
-        'Playas del Este', 'Fortaleza San Carlos de la Cabaña', 'La Cabaña', 'Castillo del Morro',
-        'El Morro', 'Estatua del Cristo de La Habana', 'Cristo de La Habana', 'Estadio Panamericano',
+        'Playas del Este', 'Fortaleza San Carlos de la Cabaña', 'Castillo del Morro',
+        'Estatua del Cristo de La Habana', 'Estadio Panamericano',
         'Alamar Zona 1', 'Alamar Zona 2', 'Alamar Zona 3', 'Alamar Zona 4', 'Alamar Zona 5',
         'Alamar Zona 6', 'Alamar Zona 7', 'Alamar Zona 8', 'Alamar Zona 9', 'Alamar Zona 10',
         'Alamar Zona 11', 'Alamar Zona 12', 'Alamar Zona 13', 'Alamar Zona 14', 'Alamar Zona 15',
         'Alamar Zona 16', 'Alamar Zona 17', 'Alamar Zona 18', 'Alamar Zona 19', 'Alamar Zona 20',
         'Alamar Zona 21', 'Alamar Zona 22', 'Alamar Zona 23', 'Alamar Zona 24', 'Alamar Zona 25',
         'Alamar Zona 26', 'Alamar Zona 27', 'Alamar Zona 28', 'Micro X', 'Curva del terreno de pelota',
-        'Túnel de La Habana', 'Tunel de La Habana'
+        'Túnel de La Habana'
       ]
     },
     {
@@ -313,17 +308,15 @@
       ],
       barrios: [
         'Guanabacoa', 'Chibás', 'Chibas', 'Eduardo Chibás', "D'Beche", 'Debeche', 'Minas', 'Barreras',
-        'Peñalver', 'La Gallega', 'Roble', 'Villa María', 'Villa Maria', 'Nalón', 'Nalon',
-        'Hata', 'La Jata', 'La Hata', 'Habana Nueva', 'Mañana', 'Manana', 'La Lima', 'Villa I', 'Villa II'
+        'Peñalver', 'La Gallega', 'Roble', 'Villa María', 'Nalón', 'Hata', 'La Jata', 'Habana Nueva', 'Mañana', 'La Lima'
       ],
       calles_principales: [
-        'Corralfalso', 'Corral Falso', 'Máximo Gómez', 'Maximo Gomez', 'Pepe Antonio',
-        'Quintín Banderas', 'Quintin Banderas', 'Calzada de Guanabacoa', 'Carretera de Cojímar',
-        'Vía Blanca', 'Carretera de Minas'
+        'Corralfalso', 'Corral Falso', 'Máximo Gómez', 'Pepe Antonio', 'Quintín Banderas',
+        'Calzada de Guanabacoa', 'Carretera de Cojímar', 'Vía Blanca', 'Carretera de Minas'
       ],
       puntos_referencia: [
         'La Cotorra', 'Manantial La Cotorra', 'Museo Municipal de Guanabacoa',
-        'Santuario de la Virgen de la Asunción', 'La Yuca', 'El Garita', 'Loma de la Cruz'
+        'Santuario de la Virgen de la Asunción', 'La Yuca', 'El Garita'
       ]
     },
     {
@@ -335,17 +328,16 @@
         'Rocafort', 'Luyanó Moderno', 'Diezmero', 'San Francisco de Paula', 'Dolores-Veracruz', 'Jacomino'
       ],
       barrios: [
-        'Jacomino', 'Diezmero', 'San Francisco de Paula', 'Dolores', 'Rocafort', 'La Rosalía', 'La Rosalia',
-        'Virgen del Camino', 'California', 'Fernández Falcón', 'Fernandez Falcon', 'Reparto Encanto',
-        'Encanto', 'Luyanó Moderno', 'Luyano Moderno', 'La National', 'Juanelo', 'Monterrey', 'Veracruz'
+        'Jacomino', 'Diezmero', 'San Francisco de Paula', 'Dolores', 'Rocafort', 'La Rosalía',
+        'Virgen del Camino', 'California', 'Fernández Falcón', 'Reparto Encanto', 'Encanto',
+        'Luyanó Moderno', 'La National', 'Juanelo', 'Monterrey', 'Veracruz'
       ],
       calles_principales: [
-        'Calzada de San Miguel', 'Calzada de Güines', 'Calzada de Guines', 'Calzada de Luyanó',
+        'Calzada de San Miguel', 'Calzada de Güines', 'Calzada de Luyanó',
         'Carretera Central', 'Vía Blanca', '1ra de Monterrey', 'San Luis', 'Calle 3ra San Francisco'
       ],
       puntos_referencia: [
-        'La Virgen del Camino', 'Virgen del Camino', 'Finca Vigía', 'Finca Vigia Ernest Hemingway',
-        'Mirador de San Miguel', 'Parque Jacomino', 'Curva de Juanelo'
+        'La Virgen del Camino', 'Finca Vigía', 'Mirador de San Miguel', 'Parque Jacomino', 'Curva de Juanelo'
       ]
     },
     {
@@ -357,17 +349,14 @@
         'Guaicanimar', 'Loma Modelo', 'Casablanca'
       ],
       barrios: [
-        'Regla', 'Casablanca', 'Guaicanamar', 'Guaicanimar', 'Loma del Fortín', 'Loma del Fortin',
-        'Modelo', 'Loma Modelo', 'Lídice', 'Lidice'
+        'Regla', 'Casablanca', 'Guaicanamar', 'Guaicanimar', 'Loma del Fortín', 'Modelo', 'Loma Modelo', 'Lídice'
       ],
       calles_principales: [
-        'Martí', 'Marti', 'Máximo Gómez', 'Maximo Gomez', 'Maceo', '24 de Febrero',
-        'Calixto García', 'Avenida del Puerto Regla', 'Perdomo'
+        'Martí', 'Máximo Gómez', 'Maceo', '24 de Febrero', 'Calixto García', 'Avenida del Puerto Regla', 'Perdomo', 'Vía Blanca'
       ],
       puntos_referencia: [
-        'Santuario Nacional de la Virgen de Regla', 'Virgen de Regla', 'Iglesia de Regla',
-        'Embarcadero de Regla', 'Lanchita de Regla', 'Colina Lenin', 'Refinería Ñico López',
-        'Nico Lopez', 'Observatorio de Casablanca', 'Casablanca ferry'
+        'Santuario Nacional de la Virgen de Regla', 'Embarcadero de Regla', 'Lanchita de Regla',
+        'Colina Lenin', 'Refinería Ñico López', 'Observatorio de Casablanca'
       ]
     },
     {
@@ -379,247 +368,189 @@
         'Cotorro', 'Santa María del Rosario', 'Cuatro Caminos', 'Alberro', 'San Pedro-Centro Cotorro', 'Lotería'
       ],
       barrios: [
-        'Cotorro', 'Centro del Cotorro', 'Santa María del Rosario', 'Santa Maria del Rosario',
-        'Cuatro Caminos', 'Lotería', 'Loteria', 'Alberro', 'San Pedro', 'Magdalena',
-        'La Caridad', 'Cruz Verde', 'Loma de Tierra'
+        'Cotorro', 'Centro del Cotorro', 'Santa María del Rosario', 'Cuatro Caminos',
+        'Lotería', 'Alberro', 'San Pedro', 'Magdalena', 'La Caridad', 'Loma de Tierra'
       ],
       calles_principales: [
-        'Carretera Central', 'Calzada de Güines', 'Calzada de Guines', 'Avenida 101', 'Calle 20', 'Calle 67', 'Calle Real Cotorro'
+        'Carretera Central', 'Calzada de Güines', 'Avenida 101', 'Calle 20', 'Calle 67', 'Calle Real Cotorro'
       ],
       puntos_referencia: [
         'Balneario de Santa María del Rosario', 'Plaza del Cotorro', 'Parque Central del Cotorro',
-        'Empresa Siderúrgica Antillana de Acero', 'Antillana de Acero', 'Botica 90', 'Centro del Cotorro'
+        'Antillana de Acero', 'Botica 90', 'Centro del Cotorro'
       ]
     }
   ];
 
-  // 2. DICCIONARIO MASIVO DE ALIAS, REPARTOS Y LOCALIDADES (>200 entradas)
+  // 2. DICCIONARIO DE PUNTOS CLAVE Y CRUCES TRIANGULADOS ESPECÍFICOS (Coordenadas de alta precisión)
+  HabanaDirecciones.crucesFrecuentes = [
+    {
+      tokens: ['rodriguez', 'concha', 'via blanca'],
+      municipio: 'Diez de Octubre',
+      barrio: 'Luyanó',
+      descripcion: 'Calle Rodríguez final e/ Calzada de Concha y Vía Blanca (Luyanó)',
+      lat: 23.1102,
+      lng: -82.3556,
+      confianza: 98
+    },
+    {
+      tokens: ['rodriguez', 'concha'],
+      municipio: 'Diez de Octubre',
+      barrio: 'Luyanó',
+      descripcion: 'Calle Rodríguez y Calzada de Concha (Luyanó)',
+      lat: 23.1115,
+      lng: -82.3582,
+      confianza: 96
+    },
+    {
+      tokens: ['concha', 'via blanca'],
+      municipio: 'Diez de Octubre',
+      barrio: 'Luyanó',
+      descripcion: 'Confluencia Calzada de Concha y Vía Blanca (Luyanó)',
+      lat: 23.1098,
+      lng: -82.3542,
+      confianza: 96
+    },
+    {
+      tokens: ['23', 'l'],
+      municipio: 'Plaza de la Revolución',
+      barrio: 'Vedado (La Rampa)',
+      descripcion: 'Calle 23 y L, Cine Yara / Hotel Habana Libre',
+      lat: 23.1394,
+      lng: -82.3831,
+      confianza: 98
+    },
+    {
+      tokens: ['100', '51'],
+      municipio: 'Marianao',
+      barrio: 'Marianao Central',
+      descripcion: 'Calle 100 y Avenida 51 (Obelisco / Ciudad Libertad)',
+      lat: 23.0850,
+      lng: -82.4310,
+      confianza: 97
+    },
+    {
+      tokens: ['tulipan', 'conill'],
+      municipio: 'Cerro',
+      barrio: 'Nuevo Vedado / Palatino',
+      descripcion: 'Tulipán y Conill, frente al Ministerio de la Agricultura',
+      lat: 23.1195,
+      lng: -82.3912,
+      confianza: 97
+    },
+    {
+      tokens: ['lacret', 'juan delgado'],
+      municipio: 'Diez de Octubre',
+      barrio: 'Santos Suárez',
+      descripcion: 'Calle Lacret y Juan Delgado (Santos Suárez)',
+      lat: 23.0975,
+      lng: -82.3735,
+      confianza: 96
+    },
+    {
+      tokens: ['lacret', 'goicuria'],
+      municipio: 'Diez de Octubre',
+      barrio: 'Santos Suárez',
+      descripcion: 'Calle Lacret y Goicuría (Santos Suárez)',
+      lat: 23.0970,
+      lng: -82.3722,
+      confianza: 96
+    },
+    {
+      tokens: ['santa ana', 'ensenada'],
+      municipio: 'Diez de Octubre',
+      barrio: 'Luyanó',
+      descripcion: 'Santa Ana e/ Ensenada y Atarés, cerca de Toyo',
+      lat: 23.1090,
+      lng: -82.3600,
+      confianza: 97
+    }
+  ];
+
+  // 3. DICCIONARIO GENERAL DE ALIAS Y REPARTOS
   HabanaDirecciones.alias = {
-    // Plaza de la Revolución
-    'vedado': 'Plaza de la Revolución',
-    'nuevo vedado': 'Plaza de la Revolución',
-    'la rampa': 'Plaza de la Revolución',
-    'rampa': 'Plaza de la Revolución',
-    'el carmelo': 'Plaza de la Revolución',
-    'carmelo': 'Plaza de la Revolución',
-    'puentes grandes': 'Plaza de la Revolución',
-    'principe': 'Plaza de la Revolución',
-    'aldecoa': 'Plaza de la Revolución',
-    'la timba': 'Plaza de la Revolución',
-    'el fanguito': 'Plaza de la Revolución',
-    'fanguito': 'Plaza de la Revolución',
-
+    // Plaza
+    'vedado': 'Plaza de la Revolución', 'nuevo vedado': 'Plaza de la Revolución',
+    'la rampa': 'Plaza de la Revolución', 'rampa': 'Plaza de la Revolución',
+    'el carmelo': 'Plaza de la Revolución', 'carmelo': 'Plaza de la Revolución',
+    'puentes grandes': 'Plaza de la Revolución', 'principe': 'Plaza de la Revolución',
+    'la timba': 'Plaza de la Revolución', 'fanguito': 'Plaza de la Revolución',
     // Playa
-    'miramar': 'Playa',
-    'siboney': 'Playa',
-    'cubanacan': 'Playa',
-    'jaimanitas': 'Playa',
-    'santa fe': 'Playa',
-    'nautico': 'Playa',
-    'flores': 'Playa',
-    'buenavista': 'Playa',
-    'buena vista': 'Playa',
-    'querejeta': 'Playa',
-    'la ceiba': 'Playa',
-    'baracoa': 'Playa',
-    'atabey': 'Playa',
-    'kohly': 'Playa',
-    'la puntilla': 'Playa',
-    'puntilla': 'Playa',
-    'country club': 'Playa',
-    'el romerillo': 'Playa',
-    'romerillo': 'Playa',
-    'alturas de miramar': 'Playa',
-
+    'miramar': 'Playa', 'siboney': 'Playa', 'cubanacan': 'Playa',
+    'jaimanitas': 'Playa', 'santa fe': 'Playa', 'nautico': 'Playa',
+    'flores': 'Playa', 'buenavista': 'Playa', 'buena vista': 'Playa',
+    'querejeta': 'Playa', 'la ceiba': 'Playa', 'baracoa': 'Playa',
+    'atabey': 'Playa', 'kohly': 'Playa', 'la puntilla': 'Playa',
+    'country club': 'Playa', 'el romerillo': 'Playa', 'alturas de miramar': 'Playa',
     // Centro Habana
-    'centro habana': 'Centro Habana',
-    'cayo hueso': 'Centro Habana',
-    'los sitios': 'Centro Habana',
-    'barrio chino': 'Centro Habana',
-    'pueblo nuevo': 'Centro Habana',
-    'dragones': 'Centro Habana',
-    'san leopoldo': 'Centro Habana',
-
-    // La Habana Vieja
-    'habana vieja': 'La Habana Vieja',
-    'la habana vieja': 'La Habana Vieja',
-    'san isidro': 'La Habana Vieja',
-    'belen': 'La Habana Vieja',
-    'catedral': 'La Habana Vieja',
-    'santo angel': 'La Habana Vieja',
-    'jesus maria': 'La Habana Vieja',
-    'plaza vieja': 'La Habana Vieja',
-    'tallapiedra': 'La Habana Vieja',
-
+    'centro habana': 'Centro Habana', 'cayo hueso': 'Centro Habana',
+    'los sitios': 'Centro Habana', 'barrio chino': 'Centro Habana',
+    'pueblo nuevo': 'Centro Habana', 'dragones': 'Centro Habana',
+    // Habana Vieja
+    'habana vieja': 'La Habana Vieja', 'san isidro': 'La Habana Vieja',
+    'belen': 'La Habana Vieja', 'catedral': 'La Habana Vieja',
+    'santo angel': 'La Habana Vieja', 'jesus maria': 'La Habana Vieja',
+    'plaza vieja': 'La Habana Vieja', 'tallapiedra': 'La Habana Vieja',
     // Diez de Octubre
-    'la vibora': 'Diez de Octubre',
-    'vibora': 'Diez de Octubre',
-    'santos suarez': 'Diez de Octubre',
-    'lawton': 'Diez de Octubre',
-    'luyano': 'Diez de Octubre',
-    'sevillano': 'Diez de Octubre',
-    'loma del chaple': 'Diez de Octubre',
-    'vista alegre': 'Diez de Octubre',
-    'jesus del monte': 'Diez de Octubre',
-    'tamarindo': 'Diez de Octubre',
+    'luyano': 'Diez de Octubre', 'la vibora': 'Diez de Octubre',
+    'vibora': 'Diez de Octubre', 'santos suarez': 'Diez de Octubre',
+    'lawton': 'Diez de Octubre', 'sevillano': 'Diez de Octubre',
+    'loma del chaple': 'Diez de Octubre', 'vista alegre': 'Diez de Octubre',
+    'jesus del monte': 'Diez de Octubre', 'tamarindo': 'Diez de Octubre',
     'toyo': 'Diez de Octubre',
-
     // Cerro
-    'el cerro': 'Cerro',
-    'cerro': 'Cerro',
-    'palatino': 'Cerro',
-    'casino deportivo': 'Cerro',
-    'las canas': 'Cerro',
-    'el canal': 'Cerro',
-    'atares': 'Cerro',
-    'latinoamericano': 'Cerro',
-    'carraguao': 'Cerro',
-
+    'cerro': 'Cerro', 'el cerro': 'Cerro', 'palatino': 'Cerro',
+    'casino deportivo': 'Cerro', 'las canas': 'Cerro', 'el canal': 'Cerro',
+    'atares': 'Cerro', 'latinoamericano': 'Cerro',
     // Marianao
-    'marianao': 'Marianao',
-    'pogolotti': 'Marianao',
-    'zamora': 'Marianao',
-    'cocosolo': 'Marianao',
-    'los quemados': 'Marianao',
-    'quemados': 'Marianao',
-    'columbia': 'Marianao',
-    'ciudad libertad': 'Marianao',
-    'los angeles': 'Marianao',
-    'finlay': 'Marianao',
-    'santa felicia': 'Marianao',
-    'el palmar': 'Marianao',
-    'pocito': 'Marianao',
-
+    'marianao': 'Marianao', 'pogolotti': 'Marianao', 'zamora': 'Marianao',
+    'cocosolo': 'Marianao', 'los quemados': 'Marianao', 'columbia': 'Marianao',
+    'ciudad libertad': 'Marianao', 'los angeles': 'Marianao',
     // La Lisa
-    'la lisa': 'La Lisa',
-    'san agustin': 'La Lisa',
-    'punta brava': 'La Lisa',
-    'arroyo arenas': 'La Lisa',
-    'el cano': 'La Lisa',
-    'valle grande': 'La Lisa',
-    'balcon arimao': 'La Lisa',
-    'guatao': 'La Lisa',
-    'versalles': 'La Lisa',
-    'coronela': 'La Lisa',
-    'la coronela': 'La Lisa',
-    'alturas de la lisa': 'La Lisa',
-
+    'la lisa': 'La Lisa', 'san agustin': 'La Lisa', 'punta brava': 'La Lisa',
+    'arroyo arenas': 'La Lisa', 'el cano': 'La Lisa', 'valle grande': 'La Lisa',
+    'balcon arimao': 'La Lisa', 'guatao': 'La Lisa', 'versalles': 'La Lisa',
     // Boyeros
-    'boyeros': 'Boyeros',
-    'rancho boyeros': 'Boyeros',
-    'santiago de las vegas': 'Boyeros',
-    'el wajay': 'Boyeros',
-    'wajay': 'Boyeros',
-    'calabazar': 'Boyeros',
-    'fontanar': 'Boyeros',
-    'altahabana': 'Boyeros',
-    'capdevila': 'Boyeros',
-    'mulgoba': 'Boyeros',
-    'mazorra': 'Boyeros',
-    'rio cristal': 'Boyeros',
-    'nuevo santiago': 'Boyeros',
-    'aldabo': 'Boyeros',
-    'abel santamaria': 'Boyeros',
-    'lutgardita': 'Boyeros',
-
+    'boyeros': 'Boyeros', 'rancho boyeros': 'Boyeros', 'santiago de las vegas': 'Boyeros',
+    'el wajay': 'Boyeros', 'wajay': 'Boyeros', 'calabazar': 'Boyeros',
+    'fontanar': 'Boyeros', 'altahabana': 'Boyeros', 'capdevila': 'Boyeros',
+    'mazorra': 'Boyeros', 'aldabo': 'Boyeros', 'abel santamaria': 'Boyeros',
     // Arroyo Naranjo
-    'arroyo naranjo': 'Arroyo Naranjo',
-    'mantilla': 'Arroyo Naranjo',
-    'parraga': 'Arroyo Naranjo',
-    'los pinos': 'Arroyo Naranjo',
-    'poey': 'Arroyo Naranjo',
-    'vibora park': 'Arroyo Naranjo',
-    'electrico': 'Arroyo Naranjo',
-    'reparto electrico': 'Arroyo Naranjo',
-    'managua': 'Arroyo Naranjo',
-    'calvario': 'Arroyo Naranjo',
-    'el calvario': 'Arroyo Naranjo',
-    'la palma': 'Arroyo Naranjo',
+    'arroyo naranjo': 'Arroyo Naranjo', 'mantilla': 'Arroyo Naranjo',
+    'parraga': 'Arroyo Naranjo', 'los pinos': 'Arroyo Naranjo',
+    'poey': 'Arroyo Naranjo', 'vibora park': 'Arroyo Naranjo',
+    'electrico': 'Arroyo Naranjo', 'managua': 'Arroyo Naranjo',
+    'calvario': 'Arroyo Naranjo', 'la palma': 'Arroyo Naranjo',
     'guinera': 'Arroyo Naranjo',
-    'la guinera': 'Arroyo Naranjo',
-    'san amado': 'Arroyo Naranjo',
-    'callejas': 'Arroyo Naranjo',
-    'las guasimas': 'Arroyo Naranjo',
-    'el lucero': 'Arroyo Naranjo',
-    'santa amalia': 'Arroyo Naranjo',
-
     // Habana del Este
-    'habana del este': 'Habana del Este',
-    'alamar': 'Habana del Este',
-    'cojimar': 'Habana del Este',
-    'guanabo': 'Habana del Este',
-    'boca ciega': 'Habana del Este',
-    'santa maria del mar': 'Habana del Este',
-    'tarara': 'Habana del Este',
-    'camilo cienfuegos': 'Habana del Este',
-    'reparto camilo cienfuegos': 'Habana del Este',
-    'villa panamericana': 'Habana del Este',
-    'guiteras': 'Habana del Este',
-    'reparto guiteras': 'Habana del Este',
-    'antonio guiteras': 'Habana del Este',
-    'reparto antonio guiteras': 'Habana del Este',
-    'bahia': 'Habana del Este',
-    'reparto bahia': 'Habana del Este',
-    'reparto bahia guiteras': 'Habana del Este',
-    'brisas del mar': 'Habana del Este',
-    'campo florido': 'Habana del Este',
-    'celimar': 'Habana del Este',
-    'bacuranao': 'Habana del Este',
-
+    'habana del este': 'Habana del Este', 'alamar': 'Habana del Este',
+    'cojimar': 'Habana del Este', 'guanabo': 'Habana del Este',
+    'boca ciega': 'Habana del Este', 'santa maria del mar': 'Habana del Este',
+    'tarara': 'Habana del Este', 'camilo cienfuegos': 'Habana del Este',
+    'reparto camilo cienfuegos': 'Habana del Este', 'villa panamericana': 'Habana del Este',
+    'guiteras': 'Habana del Este', 'antonio guiteras': 'Habana del Este',
+    'bahia': 'Habana del Este', 'reparto bahia': 'Habana del Este',
     // Guanabacoa
-    'guanabacoa': 'Guanabacoa',
-    'chibas': 'Guanabacoa',
-    'eduardo chibas': 'Guanabacoa',
-    'debeche': 'Guanabacoa',
-    'minas': 'Guanabacoa',
-    'barreras': 'Guanabacoa',
-    'penalver': 'Guanabacoa',
-    'nalon': 'Guanabacoa',
-    'la jata': 'Guanabacoa',
-    'hata': 'Guanabacoa',
-    'manana': 'Guanabacoa',
-    'habana nueva': 'Guanabacoa',
-    'la lima': 'Guanabacoa',
-
-    // San Miguel del Padrón
-    'san miguel del padron': 'San Miguel del Padrón',
-    'san miguel': 'San Miguel del Padrón',
-    'jacomino': 'San Miguel del Padrón',
-    'diezmero': 'San Miguel del Padrón',
-    'virgen del camino': 'San Miguel del Padrón',
-    'la virgen del camino': 'San Miguel del Padrón',
-    'san francisco de paula': 'San Miguel del Padrón',
-    'reparto encanto': 'San Miguel del Padrón',
-    'encanto': 'San Miguel del Padrón',
-    'rocafort': 'San Miguel del Padrón',
-    'luyano moderno': 'San Miguel del Padrón',
-    'la national': 'San Miguel del Padrón',
-    'juanelo': 'San Miguel del Padrón',
-    'monterrey': 'San Miguel del Padrón',
-
+    'guanabacoa': 'Guanabacoa', 'chibas': 'Guanabacoa', 'debeche': 'Guanabacoa',
+    'minas': 'Guanabacoa', 'barreras': 'Guanabacoa', 'penalver': 'Guanabacoa',
+    'la jata': 'Guanabacoa', 'hata': 'Guanabacoa', 'manana': 'Guanabacoa',
+    // San Miguel
+    'san miguel del padron': 'San Miguel del Padrón', 'san miguel': 'San Miguel del Padrón',
+    'jacomino': 'San Miguel del Padrón', 'diezmero': 'San Miguel del Padrón',
+    'virgen del camino': 'San Miguel del Padrón', 'san francisco de paula': 'San Miguel del Padrón',
+    'reparto encanto': 'San Miguel del Padrón', 'encanto': 'San Miguel del Padrón',
+    'luyano moderno': 'San Miguel del Padrón', 'juanelo': 'San Miguel del Padrón',
     // Regla
-    'regla': 'Regla',
-    'casablanca': 'Regla',
-    'guaicanamar': 'Regla',
-    'loma del fortin': 'Regla',
-    'lidice': 'Regla',
-
+    'regla': 'Regla', 'casablanca': 'Regla', 'guaicanamar': 'Regla',
     // Cotorro
-    'cotorro': 'Cotorro',
-    'santa maria del rosario': 'Cotorro',
-    'cuatro caminos': 'Cotorro',
-    'alberro': 'Cotorro',
-    'san pedro': 'Cotorro',
-    'loteria': 'Cotorro',
-    'magdalena': 'Cotorro',
-    'loma de tierra': 'Cotorro'
+    'cotorro': 'Cotorro', 'santa maria del rosario': 'Cotorro',
+    'cuatro caminos': 'Cotorro', 'alberro': 'Cotorro', 'san pedro': 'Cotorro'
   };
 
-  // 3. NORMALIZADOR UNIVERSAL CON FONÉTICA CUBANA Y ERRORES COMUNES
+  // 4. LIMPIADOR Y NORMALIZADOR UNIVERSAL
   HabanaDirecciones.limpiarTexto = function(str) {
     if (!str) return '';
 
-    // Convertir caracteres matemáticos de vales Unicode (Bold, Italic, Sans-serif) a ASCII
+    // Convertir caracteres Unicode matemáticos a ASCII
     var out = '';
     for (var i = 0; i < str.length; i++) {
       var code = str.codePointAt(i);
@@ -634,12 +565,11 @@
       else { out += str[i]; }
     }
 
-    // Normalizar acentos
     out = out.toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
 
-    // Reemplazos de contracciones, jerga y erratas comunes cubanas
+    // Reemplazos de contracciones, jerga y errores tipográficos cubanos
     out = out
       .replace(/\bstgo\s*(de\s*)?(las\s*)?vegas?\b|\bstgo\s*vegas?\b/g, 'santiago de las vegas')
       .replace(/\bstgo\b/g, 'santiago')
@@ -669,7 +599,7 @@
     return out;
   };
 
-  // 4. DISTANCIA LEVENSHTEIN Y SIMILITUD DE TEXTO
+  // 5. DISTANCIA LEVENSHTEIN Y SIMILITUD
   HabanaDirecciones.levenshtein = function(a, b) {
     var matrix = [];
     for (var i = 0; i <= b.length; i++) { matrix[i] = [i]; }
@@ -699,91 +629,148 @@
     return (longer.length - dist) / parseFloat(longer.length);
   };
 
-  // 5. MOTOR DE ANÁLISIS Y DEDUCCIÓN ROBUSTA
+  // 6. MOTOR DE TRIANGULACIÓN MULTI-HIPÓTESIS
   HabanaDirecciones.analizar = function(input) {
     if (!input || input.trim().length < 2) {
       return {
         encontrado: false,
         mensaje: 'Ingrese una dirección para comenzar el análisis.',
-        sugerencias: []
+        sugerencias: [],
+        respuestas: []
       };
     }
 
     var db = HabanaDirecciones;
     var texto = db.limpiarTexto(input);
 
-    var resultado = {
-      encontrado: false,
-      municipio: null,
-      barrio: null,
-      confianza: 0,
-      lat: null,
-      lng: null,
-      detalles: [],
-      sugerencias: [],
-      coordenadasAprox: null
-    };
+    // Lista de candidatos o hipótesis ordenadas por score de probabilidad
+    var candidatos = [];
 
-    // --- REGLA 1: ZONAS DE ALAMAR (Zona 1 a 28) ---
+    function registrarCandidato(municipio, barrio, puntaje, detalle, lat, lng) {
+      var munObj = db.municipios.find(function(m) { return m.nombre === municipio; });
+      var finalLat = lat || (munObj ? munObj.lat : null);
+      var finalLng = lng || (munObj ? munObj.lng : null);
+
+      var existente = candidatos.find(function(c) {
+        return c.municipio === municipio;
+      });
+
+      if (existente) {
+        // Acumular puntaje por mayor coherencia de evidencias y triangulación
+        existente.puntaje = Math.max(existente.puntaje, puntaje) + 4;
+        if (barrio && !existente.barrio) {
+          existente.barrio = barrio;
+        }
+        if (detalle && existente.detalles.indexOf(detalle) === -1) {
+          existente.detalles.push(detalle);
+        }
+        // Preservar coordenadas específicas de intersecciones
+        if (lat && lng && (!existente.latEspecifica)) {
+          existente.lat = lat;
+          existente.lng = lng;
+          existente.latEspecifica = true;
+        }
+      } else {
+        candidatos.push({
+          municipio: municipio,
+          barrio: barrio,
+          puntaje: puntaje,
+          detalles: detalle ? [detalle] : [],
+          lat: finalLat,
+          lng: finalLng,
+          latEspecifica: !!(lat && lng)
+        });
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // FASE A: TRIANGULACIÓN DIRECTA DE CRUCES Y NODOS FRECUENTES
+    // ------------------------------------------------------------------------
+    for (var cr = 0; cr < db.crucesFrecuentes.length; cr++) {
+      var cruce = db.crucesFrecuentes[cr];
+      var todosPresentes = true;
+      for (var tk = 0; tk < cruce.tokens.length; tk++) {
+        var tokenNorm = db.limpiarTexto(cruce.tokens[tk]);
+        if (texto.indexOf(tokenNorm) === -1) {
+          todosPresentes = false;
+          break;
+        }
+      }
+
+      if (todosPresentes) {
+        registrarCandidato(
+          cruce.municipio,
+          cruce.barrio,
+          cruce.confianza,
+          'Triangulación exacta de nodos: ' + cruce.descripcion,
+          cruce.lat,
+          cruce.lng
+        );
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // FASE B: DETECCIÓN DE ZONAS ALAMAR Y REPARTOS ESPECÍFICOS
+    // ------------------------------------------------------------------------
     var matchZonaAlamar = texto.match(/(?:alamar\s*)?zona\s*(\d{1,2})\b/i);
     if (matchZonaAlamar) {
       var numZona = parseInt(matchZonaAlamar[1], 10);
       if (numZona >= 1 && numZona <= 28) {
-        resultado.encontrado = true;
-        resultado.municipio = 'Habana del Este';
-        resultado.barrio = 'Alamar (Zona ' + numZona + ')';
-        resultado.confianza = 97;
-        resultado.detalles.push('Detectada Zona ' + numZona + ' característica de Alamar (Habana del Este)');
-        resultado.lat = 23.1585 + (numZona * 0.0003);
-        resultado.lng = -82.2780 - (numZona * 0.0004);
-        resultado.coordenadasAprox = { lat: resultado.lat, lng: resultado.lng };
-        return resultado;
+        registrarCandidato(
+          'Habana del Este',
+          'Alamar (Zona ' + numZona + ')',
+          97,
+          'Zona ' + numZona + ' característica de Alamar',
+          23.1585 + (numZona * 0.0003),
+          -82.2780 - (numZona * 0.0004)
+        );
       }
     }
 
-    // --- REGLA 2: REPARTO CAMILO CIENFUEGOS ---
     if (texto.indexOf('camilo cienfuegos') !== -1) {
-      resultado.encontrado = true;
-      resultado.municipio = 'Habana del Este';
-      resultado.barrio = 'Reparto Camilo Cienfuegos';
-      resultado.confianza = 96;
-      resultado.detalles.push('Reparto Camilo Cienfuegos identificado (Habana del Este)');
-      resultado.lat = 23.1500;
-      resultado.lng = -82.3250;
-      resultado.coordenadasAprox = { lat: resultado.lat, lng: resultado.lng };
-      return resultado;
+      registrarCandidato(
+        'Habana del Este',
+        'Reparto Camilo Cienfuegos',
+        96,
+        'Reparto Camilo Cienfuegos identificado',
+        23.1500,
+        -82.3250
+      );
     }
 
-    // --- REGLA 3: REPARTO BAHÍA / GUITERAS ---
     if (texto.indexOf('bahia') !== -1 || texto.indexOf('guiteras') !== -1) {
-      resultado.encontrado = true;
-      resultado.municipio = 'Habana del Este';
-      resultado.barrio = 'Reparto Antonio Guiteras (Bahía)';
-      resultado.confianza = 95;
-      resultado.detalles.push('Reparto Antonio Guiteras / Bahía identificado');
-      resultado.lat = 23.1550;
-      resultado.lng = -82.3180;
-      resultado.coordenadasAprox = { lat: resultado.lat, lng: resultado.lng };
-      return resultado;
+      registrarCandidato(
+        'Habana del Este',
+        'Reparto Antonio Guiteras (Bahía)',
+        95,
+        'Reparto Antonio Guiteras / Bahía identificado',
+        23.1550,
+        -82.3180
+      );
     }
 
-    // --- REGLA 4: MUNICIPIO EXPLÍCITO ---
+    // ------------------------------------------------------------------------
+    // FASE C: DETECCIÓN DE MUNICIPIOS EXPLÍCITOS
+    // ------------------------------------------------------------------------
     for (var m = 0; m < db.municipios.length; m++) {
       var munObj = db.municipios[m];
       var munNorm = db.limpiarTexto(munObj.nombre);
 
       if (new RegExp('(^|\\s)' + munNorm + '(\\s|$)', 'i').test(texto)) {
-        resultado.encontrado = true;
-        resultado.municipio = munObj.nombre;
-        resultado.confianza = 95;
-        resultado.lat = munObj.lat;
-        resultado.lng = munObj.lng;
-        resultado.detalles.push('Municipio identificado explícitamente: ' + munObj.nombre);
-        break;
+        registrarCandidato(
+          munObj.nombre,
+          null,
+          95,
+          'Municipio mencionado explícitamente: ' + munObj.nombre,
+          munObj.lat,
+          munObj.lng
+        );
       }
     }
 
-    // --- REGLA 5: CONSEJOS POPULARES Y BARRIOS (Evaluación global priorizando nombres más específicos/largos) ---
+    // ------------------------------------------------------------------------
+    // FASE D: CONSEJOS POPULARES Y BARRIOS (GLOBAL Y ORDENADOS POR ESPECIFICIDAD)
+    // ------------------------------------------------------------------------
     var todosLosBarrios = [];
     for (var mIdx = 0; mIdx < db.municipios.length; mIdx++) {
       var mun = db.municipios[mIdx];
@@ -797,184 +784,212 @@
         });
       }
     }
-    // Ordenar de mayor a menor longitud para que frases largas como "San Francisco de Paula" ganen sobre "Paula"
     todosLosBarrios.sort(function(a, b) { return b.nombre.length - a.nombre.length; });
 
     for (var tb = 0; tb < todosLosBarrios.length; tb++) {
-      var barrioItem = todosLosBarrios[tb];
-      var bNorm = db.limpiarTexto(barrioItem.nombre);
+      var bItem = todosLosBarrios[tb];
+      var bNorm = db.limpiarTexto(bItem.nombre);
       if (bNorm.length >= 4 && new RegExp('(^|\\s)' + bNorm + '(\\s|$)', 'i').test(texto)) {
-        resultado.encontrado = true;
-        resultado.municipio = barrioItem.municipio;
-        resultado.barrio = barrioItem.nombre;
-        resultado.confianza = Math.max(resultado.confianza, 95);
-        resultado.detalles.push('Consejo Popular / Barrio identificado: ' + barrioItem.nombre);
-        resultado.lat = barrioItem.lat;
-        resultado.lng = barrioItem.lng;
-        break;
+        registrarCandidato(
+          bItem.municipio,
+          bItem.nombre,
+          95,
+          'Consejo Popular / Barrio identificado: ' + bItem.nombre,
+          bItem.lat,
+          bItem.lng
+        );
       }
     }
 
-    // --- REGLA 6: ALIAS Y LOCALIDADES DEL DICCIONARIO ---
-    if (!resultado.barrio || resultado.confianza < 93) {
-      for (var aliasKey in db.alias) {
-        var aliasNorm = db.limpiarTexto(aliasKey);
-        if (aliasNorm.length >= 3 && new RegExp('(^|\\s)' + aliasNorm + '(\\s|$)', 'i').test(texto)) {
-          resultado.encontrado = true;
-          resultado.municipio = db.alias[aliasKey];
-          resultado.barrio = aliasKey.charAt(0).toUpperCase() + aliasKey.slice(1);
-          resultado.confianza = Math.max(resultado.confianza, 93);
-          resultado.detalles.push('Zona identificada por catálogo: ' + resultado.barrio);
+    // ------------------------------------------------------------------------
+    // FASE E: DICCIONARIO DE ALIAS Y LOCALIDADES
+    // ------------------------------------------------------------------------
+    for (var aliasKey in db.alias) {
+      var aliasNorm = db.limpiarTexto(aliasKey);
+      if (aliasNorm.length >= 3 && new RegExp('(^|\\s)' + aliasNorm + '(\\s|$)', 'i').test(texto)) {
+        var munTarget = db.alias[aliasKey];
+        var munRef = db.municipios.find(function(x) { return x.nombre === munTarget; });
+        registrarCandidato(
+          munTarget,
+          aliasKey.charAt(0).toUpperCase() + aliasKey.slice(1),
+          93,
+          'Localidad / Reparto de catálogo: ' + aliasKey,
+          munRef ? munRef.lat : null,
+          munRef ? munRef.lng : null
+        );
+      }
+    }
 
-          var munRef = db.municipios.find(function(x) { return x.nombre === resultado.municipio; });
-          if (munRef) {
-            resultado.lat = munRef.lat;
-            resultado.lng = munRef.lng;
+    // ------------------------------------------------------------------------
+    // FASE F: TRIANGULACIÓN POR CALLES EN CADA MUNICIPIO (Conteo de Coincidencias)
+    // Si una dirección contiene múltiples calles que pertenecen a un municipio,
+    // ese municipio recibe un boost exponencial de triangulación.
+    // ------------------------------------------------------------------------
+    for (var mc = 0; mc < db.municipios.length; mc++) {
+      var mItem = db.municipios[mc];
+      var matchCalles = [];
+      var normVistas = [];
+
+      for (var c = 0; c < mItem.calles_principales.length; c++) {
+        var calle = mItem.calles_principales[c];
+        var calleNorm = db.limpiarTexto(calle);
+
+        if (calleNorm.length >= 3 && new RegExp('(^|\\s)' + calleNorm + '(\\s|$)', 'i').test(texto)) {
+          // Normalizar para evitar duplicados como 'Vía Blanca' y 'Via Blanca'
+          if (normVistas.indexOf(calleNorm) === -1) {
+            normVistas.push(calleNorm);
+            matchCalles.push(calle);
           }
-          break;
         }
       }
+
+      if (matchCalles.length >= 2) {
+        // Múltiples calles trianguladas en el mismo municipio (ej. Rodríguez + Concha + Vía Blanca)
+        var puntajeTriangulado = 90 + Math.min(matchCalles.length * 4, 8);
+        registrarCandidato(
+          mItem.nombre,
+          null,
+          puntajeTriangulado,
+          'Triangulación vial múltiple (' + matchCalles.length + ' vías): ' + matchCalles.join(', '),
+          mItem.lat,
+          mItem.lng
+        );
+      } else if (matchCalles.length === 1) {
+        // Una sola calle: si es una gran arteria compartida como Vía Blanca, asignar probabilidad moderada
+        var scoreCalle = (calleNorm === 'via blanca' || calleNorm === 'carretera central') ? 70 : 80;
+        registrarCandidato(
+          mItem.nombre,
+          null,
+          scoreCalle,
+          'Vía identificada: ' + matchCalles[0],
+          mItem.lat,
+          mItem.lng
+        );
+      }
     }
 
-    // --- REGLA 7: PUNTOS DE REFERENCIA NOTABLES ---
-    for (var mi = 0; mi < db.municipios.length; mi++) {
-      var munItem = db.municipios[mi];
-      for (var p = 0; p < munItem.puntos_referencia.length; p++) {
-        var puntoNorm = db.limpiarTexto(munItem.puntos_referencia[p]);
+    // ------------------------------------------------------------------------
+    // FASE G: PUNTOS DE REFERENCIA NOTABLES
+    // ------------------------------------------------------------------------
+    for (var prM = 0; prM < db.municipios.length; prM++) {
+      var munPunto = db.municipios[prM];
+      for (var p = 0; p < munPunto.puntos_referencia.length; p++) {
+        var puntoNorm = db.limpiarTexto(munPunto.puntos_referencia[p]);
         if (puntoNorm.length >= 4 && texto.indexOf(puntoNorm) !== -1) {
-          resultado.encontrado = true;
-          resultado.municipio = munItem.nombre;
-          resultado.confianza = Math.max(resultado.confianza, 96);
-          resultado.lat = munItem.lat;
-          resultado.lng = munItem.lng;
-          resultado.detalles.push('Punto de referencia clave: ' + munItem.puntos_referencia[p]);
-          break;
-        }
-      }
-      if (resultado.confianza >= 96) break;
-    }
-
-    // --- REGLA 8: CALLES Y CRUCES DE ARTERIAS ---
-    if (!resultado.encontrado || resultado.confianza < 85) {
-      for (var mCandIdx = 0; mCandIdx < db.municipios.length; mCandIdx++) {
-        var munCand = db.municipios[mCandIdx];
-        var callesMatch = 0;
-        var callesNombres = [];
-
-        for (var cIdx = 0; cIdx < munCand.calles_principales.length; cIdx++) {
-          var cName = munCand.calles_principales[cIdx];
-          var cNorm = db.limpiarTexto(cName);
-          if (cNorm.length >= 2 && new RegExp('(^|\\s)' + cNorm + '(\\s|$)', 'i').test(texto)) {
-            callesMatch++;
-            callesNombres.push(cName);
-          }
-        }
-
-        if (callesMatch > 0) {
-          var puntaje = 75 + (callesMatch * 10);
-          if (puntaje > resultado.confianza) {
-            resultado.encontrado = true;
-            resultado.municipio = munCand.nombre;
-            resultado.confianza = Math.min(puntaje, 95);
-            resultado.lat = munCand.lat;
-            resultado.lng = munCand.lng;
-            resultado.detalles.push('Calles de ' + munCand.nombre + ' identificadas: ' + callesNombres.join(', '));
-          }
+          registrarCandidato(
+            munPunto.nombre,
+            null,
+            96,
+            'Punto de referencia clave: ' + munPunto.puntos_referencia[p],
+            munPunto.lat,
+            munPunto.lng
+          );
         }
       }
     }
 
-    // --- REGLA 9: TOLERANCIA DIFUSA Y APROXIMACIONES POR PALABRAS ---
-    if (!resultado.encontrado || resultado.confianza < 75) {
+    // ------------------------------------------------------------------------
+    // FASE H: TOLERANCIA DIFUSA Y APROXIMACIONES SI NO HAY CANDIDATOS SÓLIDOS
+    // ------------------------------------------------------------------------
+    if (candidatos.length === 0 || candidatos[0].puntaje < 75) {
       var palabras = texto.split(' ');
       for (var w = 0; w < palabras.length; w++) {
         var pal = palabras[w];
         if (pal.length < 4) continue;
 
-        // Contra municipios
         for (var mm = 0; mm < db.municipios.length; mm++) {
           var mNombre = db.municipios[mm].nombre;
           var simMun = db.similitud(pal, db.limpiarTexto(mNombre));
           if (simMun >= 0.80) {
-            resultado.encontrado = true;
-            resultado.municipio = mNombre;
-            resultado.confianza = Math.max(resultado.confianza, 84);
-            resultado.lat = db.municipios[mm].lat;
-            resultado.lng = db.municipios[mm].lng;
-            resultado.detalles.push('Deducción por similitud con Municipio: ' + mNombre);
-            break;
+            registrarCandidato(
+              mNombre,
+              null,
+              84,
+              'Similitud fonética con municipio: ' + mNombre,
+              db.municipios[mm].lat,
+              db.municipios[mm].lng
+            );
           }
         }
 
-        // Contra barrios del alias
         for (var aKeyFuzzy in db.alias) {
           var aNorm = db.limpiarTexto(aKeyFuzzy);
           var simBarrio = db.similitud(pal, aNorm);
           if (simBarrio >= 0.82) {
-            resultado.encontrado = true;
-            resultado.municipio = db.alias[aKeyFuzzy];
-            resultado.barrio = aKeyFuzzy.charAt(0).toUpperCase() + aKeyFuzzy.slice(1);
-            resultado.confianza = Math.max(resultado.confianza, 82);
-            resultado.detalles.push('Deducción por similitud con Reparto: ' + resultado.barrio);
-            break;
+            var mAlias = db.alias[aKeyFuzzy];
+            var mObj = db.municipios.find(function(x) { return x.nombre === mAlias; });
+            registrarCandidato(
+              mAlias,
+              aKeyFuzzy.charAt(0).toUpperCase() + aKeyFuzzy.slice(1),
+              82,
+              'Similitud fonética con reparto: ' + aKeyFuzzy,
+              mObj ? mObj.lat : null,
+              mObj ? mObj.lng : null
+            );
           }
         }
       }
     }
 
-    // --- REGLA 10: COORDENADAS APROXIMADAS ---
-    if (resultado.encontrado && resultado.municipio) {
-      if (!resultado.lat || !resultado.lng) {
-        var foundMun = db.municipios.find(function(x) { return x.nombre === resultado.municipio; });
-        if (foundMun) {
-          resultado.lat = foundMun.lat;
-          resultado.lng = foundMun.lng;
-        }
-      }
-      if (resultado.lat && resultado.lng) {
-        resultado.coordenadasAprox = { lat: resultado.lat, lng: resultado.lng };
-      }
+    // ------------------------------------------------------------------------
+    // FASE I: CÁLCULO DE PROBABILIDAD RELATIVA (%) Y RANKING MULTI-HIPÓTESIS
+    // ------------------------------------------------------------------------
+    if (candidatos.length === 0) {
+      return {
+        encontrado: false,
+        mensaje: 'No se encontraron coincidencias para la dirección indicada.',
+        sugerencias: [],
+        respuestas: []
+      };
     }
 
-    // --- REGLA 11: SUGERENCIAS SI NO HUBO COINCIDENCIA EXACTA ---
-    if (!resultado.encontrado) {
-      var tokens = texto.split(' ');
-      for (var t = 0; t < tokens.length; t++) {
-        var tok = tokens[t];
-        if (tok.length < 3) continue;
+    // Ordenar candidatos por puntaje de mayor a menor
+    candidatos.sort(function(a, b) {
+      return b.puntaje - a.puntaje;
+    });
 
-        for (var ak in db.alias) {
-          if (ak.indexOf(tok) !== -1 || db.similitud(tok, ak) > 0.65) {
-            resultado.sugerencias.push({
-              texto: ak.charAt(0).toUpperCase() + ak.slice(1) + ' → ' + db.alias[ak],
-              municipio: db.alias[ak]
-            });
-          }
-        }
-        for (var mu = 0; mu < db.municipios.length; mu++) {
-          var mNom = db.municipios[mu].nombre;
-          if (db.limpiarTexto(mNom).indexOf(tok) !== -1 || db.similitud(tok, db.limpiarTexto(mNom)) > 0.65) {
-            resultado.sugerencias.push({
-              texto: mNom + ' (Municipio)',
-              municipio: mNom
-            });
-          }
-        }
-      }
+    // Calcular distribución porcentual normalizada (probabilidades relativas con peso exponencial en score)
+    var pesosExponenciales = candidatos.map(function(c) {
+      return Math.pow(c.puntaje / 10, 3);
+    });
+    var sumaPesos = 0;
+    pesosExponenciales.forEach(function(p) { sumaPesos += p; });
 
-      var dict = {};
-      resultado.sugerencias = resultado.sugerencias.filter(function(s) {
-        if (dict[s.texto]) return false;
-        dict[s.texto] = true;
-        return true;
-      }).slice(0, 6);
-    }
+    var respuestas = candidatos.slice(0, 4).map(function(c, idx) {
+      var prob = Math.round((pesosExponenciales[idx] / sumaPesos) * 100);
+      var confianzaNormalizada = Math.min(c.puntaje, 99);
+      return {
+        ranking: idx + 1,
+        municipio: c.municipio,
+        barrio: c.barrio,
+        confianza: confianzaNormalizada,
+        probabilidad: Math.max(prob, 1),
+        detalles: c.detalles,
+        lat: c.lat,
+        lng: c.lng,
+        coordenadasAprox: (c.lat && c.lng) ? { lat: c.lat, lng: c.lng } : null
+      };
+    });
 
-    resultado.confianza = Math.min(resultado.confianza, 100);
-    return resultado;
+    // El primer resultado es la hipótesis principal
+    var principal = respuestas[0];
+
+    return {
+      encontrado: true,
+      municipio: principal.municipio,
+      barrio: principal.barrio,
+      confianza: principal.confianza,
+      probabilidad: principal.probabilidad,
+      lat: principal.lat,
+      lng: principal.lng,
+      coordenadasAprox: principal.coordenadasAprox,
+      detalles: principal.detalles,
+      respuestas: respuestas, // Múltiples hipótesis rankeadas con probabilidades
+      sugerencias: []
+    };
   };
 
-  // Exportar al contexto global (navegador o node)
+  // Exportar al contexto global
   if (typeof window !== 'undefined') {
     window.HabanaDirecciones = HabanaDirecciones;
   }
