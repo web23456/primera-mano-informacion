@@ -519,6 +519,23 @@ function mostrarResultadoDireccion(resultado) {
   html += '<p><strong>Confianza:</strong> <span class="confianza ' + confianzaClass + '">' +
     confianzaLabel + ' (' + resultado.confianza + '%)</span></p>';
 
+  if (resultado.lat && resultado.lng) {
+    html += '<p style="margin-top:8px;"><strong>Coordenadas GPS:</strong> ' +
+      '<code style="background:rgba(212,175,55,0.15);padding:2px 6px;border-radius:4px;color:#d4af37;font-size:0.85rem;">' +
+      resultado.lat.toFixed(4) + ', ' + resultado.lng.toFixed(4) + '</code></p>';
+    
+    // Enlace directo al mapa satelital / callejero OpenStreetMap y Google Maps
+    var osmUrl = 'https://www.openstreetmap.org/?mlat=' + resultado.lat + '&mlon=' + resultado.lng + '#map=15/' + resultado.lat + '/' + resultado.lng;
+    var gmapsUrl = 'https://www.google.com/maps?q=' + resultado.lat + ',' + resultado.lng;
+    
+    html += '<div style="margin-top:10px;display:flex;gap:8px;">' +
+      '<a href="' + osmUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:5px;background:#2a2a2a;color:#d4af37;padding:6px 12px;border-radius:6px;font-size:0.8rem;text-decoration:none;border:1px solid #d4af37;">' +
+      '<i class="fa-solid fa-map"></i> Ver en OpenStreetMap</a>' +
+      '<a href="' + gmapsUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:5px;background:#d4af37;color:#111;font-weight:600;padding:6px 12px;border-radius:6px;font-size:0.8rem;text-decoration:none;">' +
+      '<i class="fa-solid fa-diamond-turn-right"></i> Ver en Google Maps</a>' +
+      '</div>';
+  }
+
   if (resultado.detalles && resultado.detalles.length > 0) {
     html += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);">';
     html += '<p style="color:#888;font-size:0.85rem;margin-bottom:5px;">Detalles del análisis:</p>';
