@@ -522,19 +522,16 @@ function mostrarResultadoDireccion(resultado) {
     '</p>';
 
   if (resultado.lat && resultado.lng) {
-    html += '<p style="margin-top:8px;"><strong>Coordenadas GPS:</strong> ' +
-      '<code style="background:rgba(212,175,55,0.15);padding:2px 6px;border-radius:4px;color:#d4af37;font-size:0.85rem;">' +
-      resultado.lat.toFixed(4) + ', ' + resultado.lng.toFixed(4) + '</code></p>';
+    html += '<p style="margin-top:8px;"><strong>Coordenadas GPS Satelitales:</strong> ' +
+      '<code style="background:rgba(212,175,55,0.15);padding:3px 8px;border-radius:4px;color:#d4af37;font-size:0.88rem;font-weight:600;">' +
+      resultado.lat.toFixed(5) + ', ' + resultado.lng.toFixed(5) + '</code></p>';
     
-    // Enlace directo al mapa satelital / callejero OpenStreetMap y Google Maps
-    var osmUrl = 'https://www.openstreetmap.org/?mlat=' + resultado.lat + '&mlon=' + resultado.lng + '#map=16/' + resultado.lat + '/' + resultado.lng;
-    var gmapsUrl = 'https://www.google.com/maps?q=' + resultado.lat + ',' + resultado.lng;
+    // Enlace exclusivo oficial de Google Maps URLs Search API v1
+    var gmapsUrl = resultado.googleMapsUrl || ('https://www.google.com/maps/search/?api=1&query=' + resultado.lat.toFixed(5) + '%2C' + resultado.lng.toFixed(5));
     
-    html += '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">' +
-      '<a href="' + osmUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:5px;background:#2a2a2a;color:#d4af37;padding:6px 12px;border-radius:6px;font-size:0.8rem;text-decoration:none;border:1px solid #d4af37;">' +
-      '<i class="fa-solid fa-map"></i> Ver en OpenStreetMap</a>' +
-      '<a href="' + gmapsUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:5px;background:#d4af37;color:#111;font-weight:600;padding:6px 12px;border-radius:6px;font-size:0.8rem;text-decoration:none;">' +
-      '<i class="fa-solid fa-diamond-turn-right"></i> Ver en Google Maps</a>' +
+    html += '<div style="margin-top:12px;">' +
+      '<a href="' + gmapsUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg, #d4af37 0%, #b8972f 100%);color:#111;font-weight:700;padding:10px 18px;border-radius:8px;font-size:0.9rem;text-decoration:none;box-shadow:0 4px 12px rgba(212,175,55,0.3);transition:all 0.2s ease;">' +
+      '<i class="fa-solid fa-map-location-dot" style="font-size:1.1rem;"></i> Abrir en Google Maps</a>' +
       '</div>';
   }
 
@@ -554,14 +551,14 @@ function mostrarResultadoDireccion(resultado) {
     
     for (var rIdx = 1; rIdx < resultado.respuestas.length; rIdx++) {
       var alt = resultado.respuestas[rIdx];
-      var altOsm = alt.lat && alt.lng ? 'https://www.openstreetmap.org/?mlat=' + alt.lat + '&mlon=' + alt.lng + '#map=15/' + alt.lat + '/' + alt.lng : '#';
+      var altGmaps = alt.googleMapsUrl || (alt.lat && alt.lng ? ('https://www.google.com/maps/search/?api=1&query=' + alt.lat.toFixed(5) + '%2C' + alt.lng.toFixed(5)) : '#');
       html += '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:8px 10px;margin-bottom:6px;">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;">' +
         '<span style="font-weight:600;color:#eee;font-size:0.85rem;">#' + (rIdx + 1) + ' ' + alt.municipio + (alt.barrio ? ' (' + alt.barrio + ')' : '') + '</span>' +
         '<span style="font-size:0.8rem;color:#d4af37;font-weight:600;">' + alt.probabilidad + '% prob.</span>' +
         '</div>' +
         (alt.detalles && alt.detalles.length > 0 ? '<p style="color:#888;font-size:0.75rem;margin:4px 0 0 0;">' + alt.detalles[0] + '</p>' : '') +
-        (alt.lat && alt.lng ? '<div style="margin-top:4px;"><a href="' + altOsm + '" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;color:#d4af37;text-decoration:none;"><i class="fa-solid fa-location-crosshairs"></i> Coordenadas: ' + alt.lat.toFixed(4) + ', ' + alt.lng.toFixed(4) + '</a></div>' : '') +
+        (alt.lat && alt.lng ? '<div style="margin-top:6px;"><a href="' + altGmaps + '" target="_blank" rel="noopener noreferrer" style="font-size:0.78rem;color:#d4af37;text-decoration:none;display:inline-flex;align-items:center;gap:4px;"><i class="fa-solid fa-location-arrow"></i> Ver en Google Maps (' + alt.lat.toFixed(5) + ', ' + alt.lng.toFixed(5) + ')</a></div>' : '') +
         '</div>';
     }
     html += '</div>';
