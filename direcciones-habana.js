@@ -146,11 +146,522 @@
     'cotorro': { municipio: 'Cotorro', barrio: 'Cotorro Centro', lat: 23.02610, lng: -82.24750 },
     'santa maria del rosario': { municipio: 'Cotorro', barrio: 'Santa María del Rosario', lat: 23.06250, lng: -82.25710 },
     'cuatro caminos': { municipio: 'Cotorro', barrio: 'Cuatro Caminos', lat: 23.01800, lng: -82.21500 },
-    'alberro': { municipio: 'Cotorro', barrio: 'Alberro', lat: 23.03900, lng: -82.26200 }
+    'alberro': { municipio: 'Cotorro', barrio: 'Alberro', lat: 23.03900, lng: -82.26200 },
+    'campo florido': { municipio: 'Habana del Este', barrio: 'Campo Florido', lat: 23.13611, lng: -82.15278 },
+    'rio verde': { municipio: 'Boyeros', barrio: 'Río Verde', lat: 23.01806, lng: -82.40556 },
+    'monterrey': { municipio: 'San Miguel del Padrón', barrio: 'Monterrey', lat: 23.06528, lng: -82.32778 },
+    'reparto volpe': { municipio: 'Arroyo Naranjo', barrio: 'Reparto Volpe', lat: 23.06472, lng: -82.34861 },
+    'volpe': { municipio: 'Arroyo Naranjo', barrio: 'Reparto Volpe', lat: 23.06472, lng: -82.34861 },
+    'habana nueva': { municipio: 'Guanabacoa', barrio: 'Habana Nueva', lat: 23.11806, lng: -82.30278 },
+    'valle grande': { municipio: 'La Lisa', barrio: 'Valle Grande', lat: 23.03333, lng: -82.47778 },
+    'delicias': { municipio: 'San Miguel del Padrón', barrio: 'Diezmero (Delicias)', lat: 23.05694, lng: -82.31611 },
+    'las piedras': { municipio: 'San Miguel del Padrón', barrio: 'Las Piedras', lat: 23.06111, lng: -82.29167 },
+    'los pocitos': { municipio: 'Marianao', barrio: 'Los Pocitos', lat: 23.07639, lng: -82.44194 },
+    'pocitos': { municipio: 'Marianao', barrio: 'Los Pocitos', lat: 23.07639, lng: -82.44194 }
   };
 
   // 2. CRUCES EXACTOS Y NODOS VIALES GEORREFERENCIADOS CON PRECISIÓN MILIMÉTRICA
   HabanaDirecciones.crucesFrecuentes = [
+    {
+      tokens: ["35","118","120"],
+      municipio: "Marianao",
+      barrio: "Zamora",
+      descripcion: "Avenida 35 #11821 e/ 118 y 120, Zamora (detrás Hospital Militar)",
+      lat: 23.08722,
+      lng: -82.43389,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["120 a","33","35"],
+      municipio: "Marianao",
+      barrio: "Zamora",
+      descripcion: "Calle 120 A #3324 e/ 33 y 35, Marianao",
+      lat: 23.08833,
+      lng: -82.43528,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["67","122","122 a"],
+      municipio: "Marianao",
+      barrio: "Marianao Central",
+      descripcion: "Avenida 67 #12207 e/ 122 y 122A, Marianao",
+      lat: 23.08056,
+      lng: -82.43306,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["10 de octubre","via blanca","arango"],
+      municipio: "Diez de Octubre",
+      barrio: "Jesús del Monte",
+      descripcion: "Calzada de 10 de Octubre e/ Vía Blanca y Arango (Edificio 249)",
+      lat: 23.11194,
+      lng: -82.36889,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["36","17","19"],
+      municipio: "Playa",
+      barrio: "Miramar",
+      descripcion: "Calle 36 #1711 e/ 17 y 19, Miramar",
+      lat: 23.11667,
+      lng: -82.42111,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["diez de octubre","ceiba","recreo"],
+      municipio: "Regla",
+      barrio: "Regla Centro",
+      descripcion: "Calle Diez de Octubre #217 e/ Ceiba y Recreo (Cementerio de Regla)",
+      lat: 23.12389,
+      lng: -82.33083,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["tejadillo","habana","aguilar"],
+      municipio: "La Habana Vieja",
+      barrio: "Catedral / San Juan de Dios",
+      descripcion: "Calle Tejadillo #106 e/ Habana y Aguiar (Aguilar), Habana Vieja",
+      lat: 23.14111,
+      lng: -82.355,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["cortes","esperanza","agustin"],
+      municipio: "Arroyo Naranjo",
+      barrio: "Callejas",
+      descripcion: "Calle Cortés #155 e/ Esperanza y Agustín, Reparto Callejas",
+      lat: 23.07083,
+      lng: -82.35972,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["don tomas","azcarate","varona"],
+      municipio: "Arroyo Naranjo",
+      barrio: "Mantilla",
+      descripcion: "Calle Don Tomás #14 e/ Azcárate y Varona, Mantilla",
+      lat: 23.05389,
+      lng: -82.35639,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["elio llerena","enrique hart"],
+      municipio: "Habana del Este",
+      barrio: "Campo Florido",
+      descripcion: "Calle Elio Llerena #263 e/ Mártires de Girón y Enrique Hart, Campo Florido",
+      lat: 23.13611,
+      lng: -82.15278,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["consulado","genio","refugio"],
+      municipio: "Centro Habana",
+      barrio: "Colón",
+      descripcion: "Calle Consulado #61 e/ Genio y Refugio, Centro Habana",
+      lat: 23.14028,
+      lng: -82.35972,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["concepcion","marti","maceo"],
+      municipio: "Regla",
+      barrio: "Regla Centro",
+      descripcion: "Calle Concepción #114 e/ Martí y Maceo (cerca Policía), Regla",
+      lat: 23.12861,
+      lng: -82.33389,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["merced","curazao","picota"],
+      municipio: "La Habana Vieja",
+      barrio: "San Isidro / Belén",
+      descripcion: "Calle Merced #310 (Edif Mendez) e/ Curazao y Picota, Habana Vieja",
+      lat: 23.12944,
+      lng: -82.35222,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["calzada de luyano","concha","porvenir"],
+      municipio: "Diez de Octubre",
+      barrio: "Luyanó",
+      descripcion: "Calzada de Luyanó #709 e/ Concha y Porvenir, Luyanó",
+      lat: 23.10917,
+      lng: -82.35639,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["san nicolas","maloja","estrella"],
+      municipio: "Centro Habana",
+      barrio: "Los Sitios",
+      descripcion: "Calle San Nicolás #707 e/ Maloja y Estrella, Centro Habana",
+      lat: 23.12972,
+      lng: -82.36861,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["684","zona 19"],
+      municipio: "Habana del Este",
+      barrio: "Alamar (Zona 19)",
+      descripcion: "Edificio 684, Zona 19 de Alamar",
+      lat: 23.16111,
+      lng: -82.26806,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["24","concepcion","baragua"],
+      municipio: "Diez de Octubre",
+      barrio: "Lawton",
+      descripcion: "Calle 24 e/ Concepción y Baraguá (Cupet/Agro), Lawton",
+      lat: 23.09444,
+      lng: -82.35083,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["maicaja","wajay"],
+      municipio: "Boyeros",
+      barrio: "El Wajay",
+      descripcion: "Finca Maicajá Km 21 1/2 #24608, Wajay, Boyeros",
+      lat: 23.00139,
+      lng: -82.42861,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["69","134","136"],
+      municipio: "Marianao",
+      barrio: "Los Pocitos",
+      descripcion: "Avenida 69 #13434 e/ 134 y 136, Los Pocitos, Marianao",
+      lat: 23.07639,
+      lng: -82.44194,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["rosita","lililoy"],
+      municipio: "Boyeros",
+      barrio: "Aldabó",
+      descripcion: "Calle Rosita #14059 e/ Lililoy y Final, Reparto Aldabó",
+      lat: 23.05833,
+      lng: -82.38889,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["manhattan","cisneros","oeste"],
+      municipio: "Arroyo Naranjo",
+      barrio: "Los Pinos",
+      descripcion: "Calle Manhattan #9 e/ Cisneros y Oeste, Los Pinos",
+      lat: 23.07472,
+      lng: -82.37361,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["4ta","3ra","5ta","delicias"],
+      municipio: "San Miguel del Padrón",
+      barrio: "Diezmero (Delicias)",
+      descripcion: "Avenida 4ta e/ 3ra y 5ta, Delicias del Diezmero",
+      lat: 23.05694,
+      lng: -82.31611,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["tres palacios","manuel pruna","juan alonso"],
+      municipio: "Diez de Octubre",
+      barrio: "Luyanó",
+      descripcion: "Calle Tres Palacios #465 e/ Manuel Pruna y Juan Alonso, Luyanó",
+      lat: 23.10694,
+      lng: -82.35528,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["clavel","san pablo","auditor"],
+      municipio: "Cerro",
+      barrio: "Cerro Tradicional",
+      descripcion: "Calle Clavel #218 e/ San Pablo y Auditor, Cerro",
+      lat: 23.11861,
+      lng: -82.375,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["263","180","168"],
+      municipio: "Boyeros",
+      barrio: "Río Verde",
+      descripcion: "Calle 263 #16819 e/ 180 y 168, Río Verde, Boyeros",
+      lat: 23.01806,
+      lng: -82.40556,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["94","alberro"],
+      municipio: "Cotorro",
+      barrio: "Alberro",
+      descripcion: "Edificio 94, Reparto Alberro, Cotorro",
+      lat: 23.04167,
+      lng: -82.26389,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["volpe","3ra","2da"],
+      municipio: "Arroyo Naranjo",
+      barrio: "Reparto Volpe",
+      descripcion: "Calle 3ra #53 e/ 2da y Linderos, Reparto Volpe",
+      lat: 23.06472,
+      lng: -82.34861,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["monterrey","11139"],
+      municipio: "San Miguel del Padrón",
+      barrio: "Monterrey",
+      descripcion: "Calle 1ra (Edif 11139) e/ H e I, Reparto Monterrey",
+      lat: 23.06528,
+      lng: -82.32778,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["francos","santa marta","clavel"],
+      municipio: "Centro Habana",
+      barrio: "Pueblo Nuevo",
+      descripcion: "Calle Francos #408 e/ Santa Marta y Clavel, Centro Habana",
+      lat: 23.12556,
+      lng: -82.37389,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["maloja","angeles","rayo"],
+      municipio: "Centro Habana",
+      barrio: "Los Sitios",
+      descripcion: "Calle Maloja #68 e/ Ángeles y Rayo, Centro Habana",
+      lat: 23.13083,
+      lng: -82.36611,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["habana nueva","124"],
+      municipio: "Guanabacoa",
+      barrio: "Habana Nueva",
+      descripcion: "Calle 5ta #124 e/ B y C, Reparto Habana Nueva (Semáforo de Guanabacoa)",
+      lat: 23.11806,
+      lng: -82.30278,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["don tomas","ascarate","duani"],
+      municipio: "Arroyo Naranjo",
+      barrio: "Mantilla",
+      descripcion: "Calle Don Tomás #103 e/ Azcárate y Duanis, Mantilla",
+      lat: 23.05333,
+      lng: -82.35556,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["37","110","112"],
+      municipio: "Marianao",
+      barrio: "Marianao Central",
+      descripcion: "Calle 37 #11022 e/ 110 y 112 (La Pitufa), Marianao",
+      lat: 23.08583,
+      lng: -82.42861,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["san juan de dios","aguacate","compostela"],
+      municipio: "La Habana Vieja",
+      barrio: "Catedral / San Juan de Dios",
+      descripcion: "Calle San Juan de Dios #104 e/ Aguacate y Compostela, Habana Vieja",
+      lat: 23.13944,
+      lng: -82.35444,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["3ra","rotaria","via blanca"],
+      municipio: "Regla",
+      barrio: "Regla Este",
+      descripcion: "Calle 3ra (Edif 8) e/ Rotaria y Vía Blanca (Semáforo Guanabacoa-Regla)",
+      lat: 23.125,
+      lng: -82.31944,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["250","37","51"],
+      municipio: "La Lisa",
+      barrio: "San Agustín",
+      descripcion: "Calle 250 (Edif 3735) e/ 37 y 51, San Agustín, La Lisa",
+      lat: 23.05556,
+      lng: -82.46667,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["san bernardino","flores","serrano"],
+      municipio: "Diez de Octubre",
+      barrio: "Santos Suárez",
+      descripcion: "Calle San Bernardino #206 e/ Flores y Serrano, Santos Suárez",
+      lat: 23.10306,
+      lng: -82.36889,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["caminos","cotorro","granja"],
+      municipio: "Cotorro",
+      barrio: "Cuatro Caminos",
+      descripcion: "Cuatro Caminos del Cotorro, Carretera de Managua (Entrada Granja Pollo)",
+      lat: 23.01806,
+      lng: -82.21528,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["san juan de dios","oreilly"],
+      municipio: "La Habana Vieja",
+      barrio: "Catedral / San Juan de Dios",
+      descripcion: "Calle San Juan de Dios #104 (detrás del Banco O'Reilly), Habana Vieja",
+      lat: 23.13944,
+      lng: -82.35444,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["union","martires","jose miguel gomez"],
+      municipio: "Regla",
+      barrio: "Regla Centro",
+      descripcion: "Calle Unión #14b e/ Av. de los Mártires y José Miguel Gómez, Regla",
+      lat: 23.1275,
+      lng: -82.33556,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["17","2da","bahia"],
+      municipio: "Habana del Este",
+      barrio: "Reparto Antonio Guiteras (Bahía)",
+      descripcion: "Calle 17 #92A23 e/ 2da y 1ra Ave del Parque, Bahía (Secundaria 14 de Junio)",
+      lat: 23.14167,
+      lng: -82.30833,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["44","finca husillo"],
+      municipio: "Marianao",
+      barrio: "Puentes Grandes (Finca Husillo)",
+      descripcion: "Calle 44 Finca Husillo tras Planta de Gas Manufacturado, Marianao",
+      lat: 23.10083,
+      lng: -82.41667,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["viviana","valle grande"],
+      municipio: "La Lisa",
+      barrio: "Valle Grande",
+      descripcion: "Finca La Viviana, Reparto Valle Grande, La Lisa",
+      lat: 23.03333,
+      lng: -82.47778,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["204","411","413"],
+      municipio: "Boyeros",
+      barrio: "Santiago de las Vegas",
+      descripcion: "Calle 204 #41107 e/ 411 y 413 (Frente al Estadio), Santiago de las Vegas",
+      lat: 22.97361,
+      lng: -82.37917,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["5 h","240","242"],
+      municipio: "Playa",
+      barrio: "Jaimanitas",
+      descripcion: "Calle 5ta H e/ 240 y 242 (El Callejón, última bodega), Jaimanitas",
+      lat: 23.09306,
+      lng: -82.49861,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["lealtad","estrella","maloja"],
+      municipio: "Centro Habana",
+      barrio: "Los Sitios",
+      descripcion: "Calle Lealtad #709 e/ Estrella y Maloja, Centro Habana",
+      lat: 23.13139,
+      lng: -82.36944,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["factor","tulipan"],
+      municipio: "Plaza de la Revolución",
+      barrio: "Nuevo Vedado",
+      descripcion: "Calle Factor #765 e/ Conill y Tulipán (Edificio de los Pilotos), Nuevo Vedado",
+      lat: 23.11722,
+      lng: -82.40194,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["116","41","43"],
+      municipio: "Marianao",
+      barrio: "Los Quemados",
+      descripcion: "Calle 116 #4113 e/ 41 y 43, Marianao",
+      lat: 23.08333,
+      lng: -82.42639,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["valle","espada","hospital"],
+      municipio: "Centro Habana",
+      barrio: "Cayo Hueso",
+      descripcion: "Calle Valle #14 e/ Espada y Hospital, Cayo Hueso, Centro Habana",
+      lat: 23.13694,
+      lng: -82.37806,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ["corojo","primera","segunda"],
+      municipio: "San Miguel del Padrón",
+      barrio: "San Francisco de Paula (Las Piedras)",
+      descripcion: "Calle A (El Corojo) e/ 1ra y 2da, Reparto Las Piedras, San Miguel del Padrón",
+      lat: 23.06111,
+      lng: -82.29167,
+      zoom: 18,
+      confianza: 99
+    },
     // Caso de la tienda: Georgia 101 entre Constitución y Coliseo (La Palma / Arroyo Naranjo)
     {
       tokens: ['georgia', 'constitucion', 'coliseo'],
@@ -257,7 +768,7 @@
     },
     // Vedado 27 e/ D y E
     {
-      tokens: ['27', 'd', 'e'],
+      tokens: ['calle 27', 'd', 'e'],
       municipio: 'Plaza de la Revolución',
       barrio: 'Vedado',
       descripcion: 'Calle 27 entre D y E (Nro 562, Vedado)',
@@ -267,7 +778,7 @@
       confianza: 99
     },
     {
-      tokens: ['27', 'd'],
+      tokens: ['calle 27', 'calle d'],
       municipio: 'Plaza de la Revolución',
       barrio: 'Vedado',
       descripcion: 'Calle 27 y D (Vedado)',
@@ -278,7 +789,7 @@
     },
     // 23 y L (Cine Yara / Hotel Habana Libre)
     {
-      tokens: ['23', 'l'],
+      tokens: ['calle 23', 'calle l'],
       municipio: 'Plaza de la Revolución',
       barrio: 'Vedado (La Rampa)',
       descripcion: 'Calle 23 y L (Cine Yara / Hotel Habana Libre)',
@@ -641,12 +1152,16 @@
       .replace(/\bsanto suare\b|\bsantos suare\b/g, 'santos suarez')
       .replace(/\bguira\s+e\s+melena\b/g, 'guira de melena')
       .replace(/\be\s*\/\s*|\bent[\s\.]+/g, ' entre ')
-      .replace(/\s*\/\s*/g, ' entre ')
-      .replace(/\bave\.?\s*|\bavda\.?\b/g, 'avenida ')
+      .replace(/[%/]/g, ' entre ')
+      .replace(/(\d+)\s*y\s*(\d+)/gi, function(m, a, b) { return a + ' y ' + b; })
+      .replace(/(\d+)(?:ra|da|ta|ma|na|va)([a-z])\b/gi, function(m, n, l) { return n + ' ' + l.toLowerCase(); })
+      .replace(/(\d+)([a-df-km-z])\b/gi, function(m, n, l) { return n + ' ' + l.toLowerCase(); })
+      .replace(/\bave\b\.?\s*|\bavda\b\.?\s*/gi, 'avenida ')
       .replace(/avenida\.(\d+)/g, 'avenida $1')
       .replace(/\bclle\.?\s*|\bcalz\.?\b/g, 'calzada ')
       .replace(/\bedif\.?\b|\bedificio\b/g, 'edificio ')
-      .replace(/\bapt\.?|\bapto\.?|\bapartamento\b/g, 'apartamento ')
+      .replace(/\bapt(?:o|m?o)?\.?\b/gi, 'apartamento ')
+      .replace(/\baberro\b/gi, 'alberro')
       .replace(/[^a-z0-9\s]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
