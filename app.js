@@ -609,8 +609,54 @@ window.filtrarProductos = function() {
 };
 
 // ========================================
-// PWA + SERVICE WORKER
+// PWA + INSTALACIÓN APK WEB (STANDALONE)
 // ========================================
+
+var deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  // Prevenir que el navegador muestre el banner por defecto
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // Mostrar nuestra barra elegante de instalación si no fue descartada
+  var installBar = document.getElementById('install-pwa-bar');
+  if (installBar && !sessionStorage.getItem('pm_install_dismissed')) {
+    installBar.classList.add('visible');
+  }
+});
+
+function instalarPwaApp() {
+  var installBar = document.getElementById('install-pwa-bar');
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(choiceResult) {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('El usuario aceptó instalar la APK Web Gestores PM');
+      }
+      deferredPrompt = null;
+      if (installBar) installBar.classList.remove('visible');
+    });
+  } else {
+    // Si ya está instalada o en iOS / navegador sin beforeinstallprompt
+    alert('📱 Para instalar en tu teléfono:\n\n• En Chrome/Android: Toca los 3 puntos (⋮) y selecciona "Agregar a la pantalla principal" o "Instalar aplicación".\n• En iPhone (Safari): Toca el botón Compartir y luego "Agregar al inicio".');
+  }
+}
+
+function cerrarBarraInstalacion() {
+  var installBar = document.getElementById('install-pwa-bar');
+  if (installBar) {
+    installBar.classList.remove('visible');
+    sessionStorage.setItem('pm_install_dismissed', 'true');
+  }
+}
+
+window.addEventListener('appinstalled', function() {
+  console.log('Gestores PM instalada como app exitosamente');
+  var installBar = document.getElementById('install-pwa-bar');
+  if (installBar) installBar.classList.remove('visible');
+  deferredPrompt = null;
+});
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
@@ -619,7 +665,7 @@ if ('serviceWorker' in navigator) {
         var newWorker = registration.installing;
         newWorker.addEventListener('statechange', function() {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            newWorker.postMessage('SKIP_WAITING');
+            newWorker.postMessage({ action: 'skipWaiting' });
           }
         });
       });

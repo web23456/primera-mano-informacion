@@ -2,29 +2,39 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=1200">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#d4af37">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Primera Mano Info">
+  <meta name="apple-mobile-web-app-title" content="Gestores PM">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <title>Primera Mano - Información</title>
+  <link rel="icon" type="image/png" href="icons/favicon.png">
+  <title>Primera Mano - Información de Gestores</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
 
+<!-- BARRA DE INSTALACIÓN APK WEB (PWA) -->
+<div id="install-pwa-bar">
+  <span><i class="fa-solid fa-mobile-screen-button" style="color:#d4af37;"></i> Instalar <strong>Gestores PM</strong> en tu teléfono</span>
+  <button id="btn-install-pwa" onclick="instalarPwaApp()">
+    <i class="fa-solid fa-download"></i> Instalar App
+  </button>
+  <button id="btn-close-install-bar" onclick="cerrarBarraInstalacion()" title="Cerrar">✕</button>
+</div>
+
 <!-- STICKY HEADER -->
 <div id="sticky-header-container">
   <div class="top-bar">
     <div class="brand-container">
-      <i class="fa-solid fa-gem icon-animado"></i>
-      <h1 class="titulo-animado">Primera Mano <span style="font-size:0.5em;color:#ccc;">Información</span></h1>
+      <img src="icons/icon-192.png" alt="Gestores PM" style="width:42px;height:42px;border-radius:10px;border:1px solid #d4af37;box-shadow:0 0 10px rgba(212,175,55,0.5);">
+      <h1 class="titulo-animado">Primera Mano <span style="font-size:0.5em;color:#ccc;">Gestores</span></h1>
     </div>
     <div class="search-container">
       <i class="fa-solid fa-search"></i>
-      <input type="text" id="buscar-producto" placeholder="Buscar productos..." oninput="filtrarProductos()" onkeyup="filtrarProductos()">
+      <input type="text" id="buscar-producto" placeholder="Buscar productos, fichas..." oninput="filtrarProductos()" onkeyup="filtrarProductos()">
     </div>
   </div>
   <nav id="main-nav">
@@ -43,6 +53,11 @@
         <a href="#bebidas">🥤 Bebidas</a>
         <a href="#aseo">🧴 Aseo y Limpieza</a>
         <a href="#farmacia">💊 Farmacia</a>
+        <a href="#otros">📦 Otros</a>
+      </div>
+    </div>
+  </nav>
+</div>
         <a href="#otros">📦 Otros</a>
       </div>
     </div>
@@ -91,6 +106,12 @@
     </div>
   </div>
 </div>
+
+<!-- BOTÓN FLOTANTE: SALTAR A VALES PM (ESQUINA INFERIOR IZQUIERDA) -->
+<a id="vales-float" href="https://web23456.github.io/vales/" target="_blank" rel="noopener noreferrer" title="Ir a Generador de Vales PM">
+  <i class="fa-solid fa-receipt"></i>
+  <span>Vales PM</span>
+</a>
 
 <!-- FLOATING MENSAJERÍA WIDGET -->
 <div id="mensajeria-float" onclick="toggleMensajeria()">
