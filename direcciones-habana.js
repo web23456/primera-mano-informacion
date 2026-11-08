@@ -162,6 +162,27 @@
 
   // 2. CRUCES EXACTOS Y NODOS VIALES GEORREFERENCIADOS CON PRECISIÓN MILIMÉTRICA
   HabanaDirecciones.crucesFrecuentes = [
+    // San Francisco de Paula: Calle 3ra e/ San Luis y Final (Reparto Encanto)
+    {
+      tokens: ['3ra', 'san luis', 'encanto'],
+      municipio: 'San Miguel del Padrón',
+      barrio: 'San Francisco de Paula (Reparto Encanto)',
+      descripcion: 'Calle 3ra #10511 e/ San Luis y Final, Reparto Encanto',
+      lat: 23.06347,
+      lng: -82.29601,
+      zoom: 18,
+      confianza: 99
+    },
+    {
+      tokens: ['3ra', 'san luis'],
+      municipio: 'San Miguel del Padrón',
+      barrio: 'San Francisco de Paula',
+      descripcion: 'Calle 3ra y San Luis (San Francisco de Paula)',
+      lat: 23.06347,
+      lng: -82.29601,
+      zoom: 18,
+      confianza: 99
+    },
     {
       tokens: ["35","118","120"],
       municipio: "Marianao",
@@ -1178,6 +1199,58 @@
     return 'https://www.google.com/maps/search/?api=1&query=' + lat.toFixed(5) + '%2C' + lng.toFixed(5);
   };
 
+  
+  // Extractor inteligente de la sección de dirección en facturas estructuradas de gestores
+  HabanaDirecciones.aislarDireccion = function(input) {
+    if (!input) return '';
+    var str = input.toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
+    // Normalizar fuentes matemáticas especiales (bold/italic Unicode de WhatsApp)
+    str = str.replace(/[\uD835][\uDC00-\uDFFF]/g, function(c) {
+      var code = c.codePointAt(0);
+      if (code >= 0x1D400 && code <= 0x1D419) return String.fromCharCode(65 + code - 0x1D400);
+      if (code >= 0x1D41A && code <= 0x1D433) return String.fromCharCode(97 + code - 0x1D41A);
+      if (code >= 0x1D434 && code <= 0x1D44D) return String.fromCharCode(65 + code - 0x1D434);
+      if (code >= 0x1D44E && code <= 0x1D467) return String.fromCharCode(97 + code - 0x1D44E);
+      if (code >= 0x1D468 && code <= 0x1D481) return String.fromCharCode(65 + code - 0x1D468);
+      if (code >= 0x1D482 && code <= 0x1D49B) return String.fromCharCode(97 + code - 0x1D482);
+      if (code >= 0x1D5D4 && code <= 0x1D5ED) return String.fromCharCode(65 + code - 0x1D5D4);
+      if (code >= 0x1D5EE && code <= 0x1D607) return String.fromCharCode(97 + code - 0x1D5EE);
+      return c;
+    });
+
+    var matchHeader = str.match(/(?:REMCUP-EF-HABANA|CUP EFECTIVO HABANA|USD EFECRIVO HABANA|CUP EF\s*-\s*HABANA)\s*-\s*([^-]+)\s*-/i);
+    var headerMun = matchHeader ? matchHeader[1].trim() : '';
+
+    var lines = str.split(/\r?\n/);
+    var inAddress = false;
+    var addressLines = [];
+
+    for (var i = 0; i < lines.length; i++) {
+      var cleanLine = lines[i].trim();
+      if (/^[✨\s*-]*direccion(?:\s*(?:del\s*cliente|para\s*el\s*envio))?\s*:/i.test(cleanLine)) {
+        inAddress = true;
+        var content = cleanLine.replace(/^[✨\s*-]*direccion(?:\s*(?:del\s*cliente|para\s*el\s*envio))?\s*:\s*/i, '');
+        if (content) addressLines.push(content);
+        continue;
+      }
+      if (inAddress) {
+        if (/^[✨\s*-]*(?:pedido|precio|total|dinero|cantidad|metodo|nombre|gestor|telefono|carnet|ci|fecha|reciben|entrega|descontar)\b/i.test(cleanLine)) {
+          inAddress = false;
+          break;
+        }
+        if (cleanLine) addressLines.push(cleanLine);
+      }
+    }
+
+    if (addressLines.length > 0) {
+      var munMatch = str.match(/(?:municipio|provincia)\s*:?\s*([^\n\r]+)/gi);
+      var extra = munMatch ? ' ' + munMatch.join(' ') : (headerMun ? ' Municipio: ' + headerMun : '');
+      return addressLines.join(' ') + extra;
+    }
+    return input;
+  };
+
   // 5. MOTOR DE ANÁLISIS, TRIANGULACIÓN Y RANKING MULTI-HIPÓTESIS
   HabanaDirecciones.analizar = function(input) {
     if (!input || input.trim().length < 2) {
@@ -1189,7 +1262,8 @@
     }
 
     var db = HabanaDirecciones;
-    var texto = db.limpiarTexto(input);
+    var direccionLimpia = db.aislarDireccion(input);
+    var texto = db.limpiarTexto(direccionLimpia);
     var candidatos = [];
 
     function registrarCandidato(municipio, barrio, puntaje, detalle, lat, lng, esExacto) {
